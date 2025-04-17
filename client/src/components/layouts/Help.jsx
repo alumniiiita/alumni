@@ -38,38 +38,51 @@ const Help = ({ submitFeedback }) => {
 						<h5 className="large text-primary">
 							For any queries/feedback, you can fill out this form
 						</h5>
+						<p style={{ color: "red", marginBottom: "1em" }}>
+							<span>*</span> Indicates required field
+						</p>
 					</div>
 					<form className="form" onSubmit={(e) => onSubmit(e)}>
 						<div className="form-group">
+							<label htmlFor="name">
+								Name <span style={{ color: "red" }}>*</span>
+							</label>
 							<input
 								type="text"
 								name="name"
 								value={name}
 								id="name"
 								placeholder="Name"
-								onChange={(e) => onChange(e)}
+								onChange={onChange}
 								required
 							/>
 						</div>
 						<div className="form-group">
+							<label htmlFor="email">
+								Email Address{" "}
+								<span style={{ color: "red" }}>*</span>
+							</label>
 							<input
 								type="email"
 								name="email"
 								id="email"
 								value={email}
 								placeholder="Email Address"
-								onChange={(e) => onChange(e)}
+								onChange={onChange}
 								required
 							/>
 						</div>
 						<div className="form-group">
-							<p>Select your role</p>
+							<label htmlFor="role">
+								Select your role{" "}
+								<span style={{ color: "red" }}>*</span>
+							</label>
 							<select
 								name="role"
 								id="role"
 								className="form-dropdown"
 								value={role}
-								onChange={(e) => onChange(e)}
+								onChange={onChange}
 								required
 							>
 								<option value="student">Student</option>
@@ -78,12 +91,16 @@ const Help = ({ submitFeedback }) => {
 							</select>
 						</div>
 						<div className="form-group">
+							<label htmlFor="feedback">
+								Your Feedback{" "}
+								<span style={{ color: "red" }}>*</span>
+							</label>
 							<textarea
 								name="feedback"
 								id="feedback"
 								rows="6"
 								value={feedback}
-								onChange={(e) => onChange(e)}
+								onChange={onChange}
 								required
 							/>
 						</div>

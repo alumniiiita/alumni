@@ -106,14 +106,9 @@ const Navbar = ({
           <span className="hide-sm">Achievements/Awards</span>
         </Link>
       // </li> */}
-       <li>
-        <a href="https://nano-media.netlify.app" className="navbar-link">
-          <span className="hide-sm">Messenger</span>
-        </a>
-      </li>
       <li>
-        <a href="https://chat-app-greatstack.vercel.app/" className="navbar-link">
-          <span className="hide-sm">Chat</span>
+        <a href="https://drive.google.com/file/d/1IOdnfY6WIyKT8bQDR8sTppR003F1XLZN/view?usp=sharing" className="navbar-link">
+          <span className="hide-sm">Download Manuals</span>
         </a>
       </li>
       <li>

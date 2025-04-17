@@ -12,7 +12,7 @@ const ChannelSchema = new mongoose.Schema({
 const Channel = mongoose.model("channel", ChannelSchema);
 const addChannel = async() =>{
 			// const { new_channel_name } = "research";
-			const channel = new Channel({ name: "research" });
+			const channel = new Channel({ name: "Research" });
 			const channelObj = await channel.save();
 }
 // addChannel();

@@ -15,7 +15,8 @@ const AddExperience = ({ addExperience, history }) => {
 		description: "",
 	});
 
-    const [toDateDisabled, toggleSwitch] = useState(false);
+	const [toDateDisabled, toggleSwitch] = useState(false);
+
 	const {
 		company,
 		location,
@@ -40,83 +41,114 @@ const AddExperience = ({ addExperience, history }) => {
 			<div className="profile-form-container">
 				<div className="form-header">
 					<h1 className="large text-primary">Add Experience</h1>
-					<small style={{ color: "red" }}>* = required field</small>
+					<p style={{ color: "red" }}>* = required field</p>
 				</div>
-				<form className="form" onSubmit={(e) => onSubmit(e)}>
+				<form className="form" onSubmit={onSubmit}>
 					<div className="form-group">
+						<label htmlFor="title">
+							Job Title <span style={{ color: "red" }}>*</span>
+						</label>
 						<input
 							type="text"
-							placeholder="* Job Title"
+							id="title"
 							name="title"
+							placeholder="e.g. Software Developer"
 							value={title}
 							onChange={onChange}
-							// required
+							required
+							aria-required="true"
 						/>
 					</div>
+
 					<div className="form-group">
+						<label htmlFor="company">
+							Company <span style={{ color: "red" }}>*</span>
+						</label>
 						<input
 							type="text"
-							placeholder="* Company"
+							id="company"
 							name="company"
+							placeholder="e.g. Google, Infosys..."
 							value={company}
 							onChange={onChange}
-							// required
+							required
+							aria-required="true"
 						/>
 					</div>
+
 					<div className="form-group">
+						<label htmlFor="location">Location</label>
 						<input
 							type="text"
-							placeholder="Location"
+							id="location"
 							name="location"
+							placeholder="e.g. Bangalore, India"
 							value={location}
 							onChange={onChange}
 						/>
 					</div>
+
 					<div className="form-group">
-						<p>From Date</p>
+						<label htmlFor="from">
+							From Date <span style={{ color: "red" }}>*</span>
+						</label>
 						<input
 							type="date"
+							id="from"
 							name="from"
 							value={from}
 							onChange={onChange}
+							required
+							aria-required="true"
 						/>
 					</div>
+
 					<div className="form-group checkbox-inline">
-                            <label>Current Job</label>
-							<input
-								type="checkbox"
-								name="current"
-								checked={current}
-								value={current}
-								onChange={() => {
-									setFormInput({
-										...formInput,
-										current: !current,
-									});
-                                    toggleSwitch(!toDateDisabled);
-								}}
-							/>
+						<label htmlFor="current">Current Job</label>
+						<input
+							type="checkbox"
+							id="current"
+							name="current"
+							checked={current}
+							onChange={() => {
+								setFormInput({
+									...formInput,
+									current: !current,
+								});
+								toggleSwitch(!toDateDisabled);
+							}}
+						/>
 					</div>
+
 					<div className="form-group">
-						<p>To Date</p>
+						<label htmlFor="to">To Date</label>
 						<input
 							type="date"
+							id="to"
 							name="to"
 							value={to}
 							onChange={onChange}
-							disabled={toDateDisabled ? 'disabled': ''}
+							disabled={toDateDisabled ? "disabled" : ""}
 						/>
 					</div>
+
 					<div className="form-group">
+						<label htmlFor="description">Description</label>
 						<textarea
+							id="description"
 							name="description"
-                            style={{width: "100%", padding:"1em", outline: "none"}}
 							rows="5"
-							placeholder="Job Description"
+							style={{
+								width: "100%",
+								padding: "1em",
+								outline: "none",
+							}}
+							placeholder="Details about your work, responsibilities, or achievements"
 							value={description}
 							onChange={onChange}
 						/>
 					</div>
+
 					<div className="back-submit-buttons">
 						<Link
 							className="btn btn-light my-1"
@@ -129,6 +161,7 @@ const AddExperience = ({ addExperience, history }) => {
 							type="submit"
 							className="btn btn-primary my-1"
 							style={{ width: "40%" }}
+							value="Add Experience"
 						/>
 					</div>
 				</form>

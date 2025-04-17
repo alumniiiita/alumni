@@ -43,11 +43,22 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 			},
 		};
 
-		const res1 = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/upload-image`, formData1, config);
-		const res2 = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/upload-image`, formData2, config);
+		const res1 = await axios.post(
+			`${process.env.REACT_APP_BACKEND_URL}/upload-image`,
+			formData1,
+			config
+		);
+		const res2 = await axios.post(
+			`${process.env.REACT_APP_BACKEND_URL}/upload-image`,
+			formData2,
+			config
+		);
 
-		const success = submitAchievement(formInput, `${process.env.REACT_APP_BACKEND_URL}/awards/${res1.data}`, 
-		`${process.env.REACT_APP_BACKEND_URL}/awards/${res2.data}`);
+		const success = submitAchievement(
+			formInput,
+			`${process.env.REACT_APP_BACKEND_URL}/awards/${res1.data}`,
+			`${process.env.REACT_APP_BACKEND_URL}/awards/${res2.data}`
+		);
 
 		if (success) {
 			setSuccessOpen(true);
@@ -78,7 +89,15 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 							achievement.
 						</strong>
 					</div>
+
+					<p style={{ color: "red", marginBottom: "1em" }}>
+						<span>*</span> Indicates required field
+					</p>
+
 					<div className="form-group">
+						<label htmlFor="name">
+							Name <span style={{ color: "red" }}>*</span>
+						</label>
 						<input
 							type="text"
 							name="name"
@@ -86,28 +105,36 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 							placeholder="Name"
 							value={name}
 							required
-							onChange={(event) => onChange(event)}
+							onChange={onChange}
 						/>
 					</div>
+
 					<div className="form-group">
+						<label htmlFor="enrollment_number">
+							Enrollment Number
+						</label>
 						<input
 							type="text"
 							name="enrollment_number"
 							id="enrollment_number"
 							placeholder="Enrollment Number"
 							value={enrollment_number}
-							onChange={(event) => onChange(event)}
+							onChange={onChange}
 						/>
 					</div>
+
 					<div className="form-group">
-						<p>Choose your Academic Program</p>
+						<label htmlFor="program">
+							Choose your Academic Program{" "}
+							<span style={{ color: "red" }}>*</span>
+						</label>
 						<select
 							name="program"
 							id="program"
 							className="form-dropdown"
 							value={program}
 							required
-							onChange={(event) => onChange(event)}
+							onChange={onChange}
 						>
 							<option value="btech-it">B.Tech IT</option>
 							<option value="btech-ece">B.Tech ECE</option>
@@ -117,7 +144,11 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 							<option value="phd">PHD</option>
 						</select>
 					</div>
+
 					<div className="form-group">
+						<label htmlFor="passing_year">
+							Passout Year <span style={{ color: "red" }}>*</span>
+						</label>
 						<input
 							type="number"
 							min="1995"
@@ -126,11 +157,15 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 							placeholder="Passout Year"
 							value={passing_year}
 							required
-							onChange={(event) => onChange(event)}
+							onChange={onChange}
 						/>
 					</div>
+
 					<div className="form-group">
-						<label>Awards / Achievements</label>
+						<label htmlFor="rewards">
+							Awards / Achievements{" "}
+							<span style={{ color: "red" }}>*</span>
+						</label>
 						<textarea
 							className="form-group"
 							name="rewards"
@@ -138,23 +173,27 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 							rows="12"
 							required
 							value={rewards}
-							onChange={(event) => onChange(event)}
+							onChange={onChange}
 							placeholder={
 								"Please Enter details in the following format:\n\nTitle of Award:\n\nType of Award:\n\nName of Awarding Organisation:\n\nReceived Jointly / Solo:\n\nCash Prize Received:"
 							}
 						/>
 					</div>
+
 					<div className="form-group">
-						<label>Date of Award</label>
+						<label htmlFor="award_date">
+							Date of Award <span style={{ color: "red" }}>*</span>
+						</label>
 						<input
 							type="date"
 							name="award_date"
 							id="award_date"
 							value={award_date}
 							required
-							onChange={(event) => onChange(event)}
+							onChange={onChange}
 						/>
 					</div>
+
 					<div className="form-group">
 						<label>
 							Your photo receiving the award / Any Passport photo
@@ -164,19 +203,20 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 							type="file"
 							accept="image/*"
 							onChange={(e) => setImage(e.target.files[0])}
-						></input>
+						/>
 					</div>
+
 					<div className="form-group">
 						<label>
-							Certificate / Proof of Achievement (Supported
-							formats: .pdf, .png, .jpg, .jpeg)
+							Certificate / Proof of Achievement (Supported formats: .pdf, .png, .jpg, .jpeg)
 						</label>
 						<input
 							type="file"
 							accept="application/pdf, image/*"
 							onChange={(e) => setProof(e.target.files[0])}
-						></input>
+						/>
 					</div>
+
 					<div className="form-group">
 						<input
 							type="submit"
@@ -186,6 +226,7 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 					</div>
 				</form>
 			</div>
+
 			<Snackbar
 				open={successOpen}
 				autoHideDuration={6000}
@@ -200,6 +241,7 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 					Submit Success !!
 				</Alert>
 			</Snackbar>
+
 			<Snackbar
 				open={errorOpen}
 				autoHideDuration={6000}

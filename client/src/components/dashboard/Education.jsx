@@ -18,10 +18,16 @@ const Education = ({ education, deleteEducation }) => {
 					)}
 				</p>
 				<p>
-					<strong>Degree:</strong> {edu.degree}
+					<strong>
+						Degree <span style={{ color: "red" }}>*</span>:
+					</strong>{" "}
+					{edu.degree}
 				</p>
 				<p>
-					<strong>Field of Study:</strong> {edu.fieldofstudy}
+					<strong>
+						Field of Study <span style={{ color: "red" }}>*</span>:
+					</strong>{" "}
+					{edu.fieldofstudy}
 				</p>
 				<p>
 					<strong>Description:</strong> {edu.description}
@@ -45,6 +51,9 @@ const Education = ({ education, deleteEducation }) => {
 			<h2 className="my-2" style={{ textAlign: "center" }}>
 				Education
 			</h2>
+			<p style={{ color: "red", textAlign: "center" }}>
+				<span>*</span> Indicates required field
+			</p>
 			<div className="education-list">
 				{education.length > 0 ? (
 					educations

@@ -204,14 +204,14 @@ const fun = async() =>{
 		email: "iit2020036@iiita.ac.in",
 		password: pass,
 		isAdmin: true,
-		adminType : "",
+		adminType : "head",
 		name: "Vikas Gupta",
 		role :"Admin"
 	})
-	// const updating2 = await ppp.save();
+	//const updating2 = await ppp.save();
 }
 
-// fun();
+	//fun();
 	
 	
 	UserSchema.index({ "$**": "text" });

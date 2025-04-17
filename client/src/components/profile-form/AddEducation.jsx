@@ -40,99 +40,116 @@ const AddEducation = ({ addEducation, history }) => {
 			<div className="profile-form-container">
 				<div className="form-header">
 					<h1 className="large text-primary">Add Education</h1>
-					<small style={{ color: "red" }}>* = required field</small>
+					<p style={{ color: "red" }}>* = required field</p>
 				</div>
-				<form className="form" onSubmit={(e) => onSubmit(e)}>
+				<form className="form" onSubmit={onSubmit}>
 					<div className="form-group">
+						<label htmlFor="school">
+							School / University / Institution <span style={{ color: "red" }}>*</span>
+						</label>
 						<input
 							type="text"
-							placeholder="* School / University / Institution"
+							id="school"
 							name="school"
+							placeholder="Name of School / University / Institution"
 							value={school}
 							onChange={onChange}
-							// required
+							required
 						/>
 					</div>
+
 					<div className="form-group">
+						<label htmlFor="degree">
+							Degree <span style={{ color: "red" }}>*</span>
+						</label>
 						<input
 							type="text"
-							placeholder="* Degree"
+							id="degree"
 							name="degree"
+							placeholder="e.g. BTECH, MTECH..."
 							value={degree}
 							onChange={onChange}
-							// required
+							required
 						/>
 					</div>
+
 					<div className="form-group">
+						<label htmlFor="fieldofstudy">
+							Field of Study <span style={{ color: "red" }}>*</span>
+						</label>
 						<input
 							type="text"
-							placeholder="* Field of Study"
+							id="fieldofstudy"
 							name="fieldofstudy"
+							placeholder="e.g. IT, ECE..."
 							value={fieldofstudy}
 							onChange={onChange}
+							required
 						/>
 					</div>
+
 					<div className="form-group">
-						<p>From Date</p>
+						<label htmlFor="from">
+							From Date <span style={{ color: "red" }}>*</span>
+						</label>
 						<input
 							type="date"
+							id="from"
 							name="from"
 							value={from}
 							onChange={onChange}
+							required
 						/>
 					</div>
+
 					<div className="form-group checkbox-inline">
-						<label>Current Study</label>
+						<label htmlFor="current">Current Study</label>
 						<input
 							type="checkbox"
+							id="current"
 							name="current"
 							checked={current}
-							value={current}
 							onChange={() => {
-								setFormInput({
-									...formInput,
-									current: !current,
-								});
+								setFormInput({ ...formInput, current: !current });
 								toggleSwitch(!toDateDisabled);
 							}}
 						/>
 					</div>
+
 					<div className="form-group">
-						<p>To Date</p>
+						<label htmlFor="to">To Date</label>
 						<input
 							type="date"
+							id="to"
 							name="to"
 							value={to}
 							onChange={onChange}
 							disabled={toDateDisabled ? "disabled" : ""}
 						/>
 					</div>
+
 					<div className="form-group">
+						<label htmlFor="description">Description</label>
 						<textarea
+							id="description"
 							name="description"
-							style={{
-								width: "100%",
-								padding: "1em",
-								outline: "none",
-							}}
+							style={{ width: "100%", padding: "1em", outline: "none" }}
 							rows="5"
-							placeholder="Job Description"
+							placeholder="Details about your education (optional)"
 							value={description}
 							onChange={onChange}
 						/>
 					</div>
+
 					<div className="back-submit-buttons">
-						<Link
-							className="btn btn-light my-1"
-							to="/userprofile"
-							style={{ width: "40%" }}
-						>
+						<Link className="btn btn-light my-1" to="/userprofile" style={{ width: "40%" }}>
 							Go Back
 						</Link>
 						<input
 							type="submit"
 							className="btn btn-primary my-1"
 							style={{ width: "40%" }}
+							value="Add Education"
 						/>
 					</div>
 				</form>

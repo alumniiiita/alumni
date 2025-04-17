@@ -27,7 +27,7 @@ const Login = ({ login, isAuthenticated, closeSideNav }) => {
 	};
 
 	if (isAuthenticated) {
-		return <Redirect to="/feed/topic/Placements?search=" />;
+		return <Redirect to="/feed/topic/Research?search=" />;
 	}
 
 	const togglePassword = () => {
@@ -79,14 +79,6 @@ const Login = ({ login, isAuthenticated, closeSideNav }) => {
 				</div>
 				<input type="submit" className="btn btn-primary" value="Login" />
 			</form>
-
-			{/* LinkedIn Login Button */}
-			<div style={{ marginTop: "20px" }}>
-				<button onClick={handleLinkedInLogin} style={{ padding: "10px", fontSize: "16px" }}>
-					SingIn with LinkedIn
-				</button>
-			</div>
-
 			<p className="my-1">
 				Forgot Password? <Link to="/forgotPassword">Reset Password</Link>
 			</p>

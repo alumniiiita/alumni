@@ -15,6 +15,7 @@ import { getAllChannels } from "../../actions/channel";
 import axios from "axios";
 import { Snackbar } from "@mui/material";
 import { Alert } from "@mui/material";
+import CreatableSelect from "react-select/creatable";
 
 const PostForm = ({
 	createPost,
@@ -30,7 +31,7 @@ const PostForm = ({
 }) => {
 	const [text, setText] = useState("");
 	const [heading, setHeading] = useState("");
-	const [channel, setChannel] = useState("Research");
+	const [channel, setChannel] = useState("");
 	const [visibleStudent, setVisibleStudent] = useState(false);
 	const [visibleFaculty, setVisibleProf] = useState(false);
 	const [visibleAlumni, setVisibleAlumni] = useState(false);
@@ -39,81 +40,74 @@ const PostForm = ({
 	const [image, setImage] = useState("");
 
 	useEffect(() => {
-		async function myfunction() {
+		(async function () {
 			await getRequirePostApproval();
 			await getAllChannels();
-		}
-		myfunction();
+		})();
 	}, []);
 
 	const onSubmit = async (e) => {
-		// console.log(channel);
 		e.preventDefault();
 
-		if (
-			visibleAlumni === false &&
-			visibleFaculty === false &&
-			visibleStudent === false
-		) {
-			setAlert("Please check atleast one checkbox", "danger");
-		} else {
-			let success = 0;
-
-			const config = {
-				headers: {
-					"Content-Type": "multipart/form-data",
-				},
-			};
-
-			const images = [];
-
-			if (image !== "") {
-				const formData1 = new FormData();
-				formData1.append("file", image);
-				const res1 = await axios.post(
-					`${process.env.REACT_APP_BACKEND_URL}/upload-image`,
-					formData1,
-					config
-				);
-				images.push(res1.data);
-			}
-			console.log(requireApproval);
-			if (requireApproval) {
-				success = await createPostRequest({
-					text,
-					heading,
-					visibleStudent,
-					visibleFaculty,
-					visibleAlumni,
-					channel,
-					images,
-				});
-			} else {
-				success = await createPost({
-					text,
-					heading,
-					visibleStudent,
-					visibleFaculty,
-					visibleAlumni,
-					channel,
-					images,
-				});
-			}
-
-			if (success) {
-				setSuccessOpen(true);
-			} else {
-				setErrorOpen(true);
-			}
+		if (!heading.trim()) {
+			setAlert("Heading is required", "danger");
+			return;
 		}
+
+		if (!text || text.trim() === "" || text === "<p></p>") {
+			setAlert("Post content is required", "danger");
+			return;
+		}
+
+		if (!visibleStudent && !visibleFaculty && !visibleAlumni) {
+			setAlert("Please check at least one visibility checkbox", "danger");
+			return;
+		}
+
+		if (!channel || channel.trim() === "") {
+			setAlert("Channel is required", "danger");
+			return;
+		}
+
+		let success = 0;
+		const config = {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		};
+		const images = [];
+
+		if (image !== "") {
+			const formData1 = new FormData();
+			formData1.append("file", image);
+			const res1 = await axios.post(
+				`${process.env.REACT_APP_BACKEND_URL}/upload-image`,
+				formData1,
+				config
+			);
+			images.push(res1.data);
+		}
+
+		const payload = {
+			heading,
+			text,
+			visibleStudent,
+			visibleFaculty,
+			visibleAlumni,
+			channel,
+			images,
+		};
+
+		success = requireApproval
+			? await createPostRequest(payload)
+			: await createPost(payload);
+
+		if (success) setSuccessOpen(true);
+		else setErrorOpen(true);
 	};
 
-	const handleCloseSuccess = () => {
-		setSuccessOpen(false);
-	};
-	const handleCloseError = () => {
-		setErrorOpen(false);
-	};
+	const handleCloseSuccess = () => setSuccessOpen(false);
+	const handleCloseError = () => setErrorOpen(false);
 
 	return (
 		<React.Fragment>
@@ -122,8 +116,11 @@ const PostForm = ({
 					<h1 className="large text-primary">Write a post</h1>
 					<small style={{ color: "red" }}>* = required field</small>
 				</div>
-				<form className="form" onSubmit={(e) => onSubmit(e)}>
+				<form className="form" onSubmit={onSubmit}>
 					<div className="form-group">
+						<label>
+							Topic/Heading <span style={{ color: "red" }}>*</span>
+						</label>
 						<input
 							type="text"
 							placeholder="Topic/Heading"
@@ -134,6 +131,9 @@ const PostForm = ({
 						/>
 					</div>
 					<div className="form-group">
+						<label>
+							Post Body <span style={{ color: "red" }}>*</span>
+						</label>
 						<CKEditor
 							editor={ClassicEditor}
 							data={text}
@@ -152,36 +152,17 @@ const PostForm = ({
 							onChange={(e) => setImage(e.target.files[0])}
 						/>
 					</div>
-					
-					{/* <div className="form-group">
-						<label>Upload images (.png, .jpg, .jpeg)</label>
-						<input
-							type="file"
-							name="multi-files"
-							id="multi-files"
-							multiple
-							onChange={handleFileChange}
-						/>
-					</div> */}
-
 					<div className="form-group select-post-visibility">
-						<p
-							style={{ fontSize: "1.2rem" }}
-							className="secondary-text"
-						>
-							Who do you want this post to be visible to?
+						<p style={{ fontSize: "1.2rem" }} className="secondary-text">
+							Who do you want this post to be visible to? <span style={{ color: "red" }}>*</span>
 						</p>
 						<div className="form-group checkbox-inline">
 							<label>Students</label>
 							<input
 								type="checkbox"
 								name="student"
-								checked={visibleStudent ? true : false}
-								value={visibleStudent}
-								id="student"
-								onChange={(e) =>
-									setVisibleStudent(!visibleStudent)
-								}
+								checked={visibleStudent}
+								onChange={() => setVisibleStudent(!visibleStudent)}
 							/>
 						</div>
 						<div className="form-group checkbox-inline">
@@ -189,12 +170,8 @@ const PostForm = ({
 							<input
 								type="checkbox"
 								name="prof"
-								checked={visibleFaculty ? true : false}
-								value={visibleFaculty}
-								id="prof"
-								onChange={(e) =>
-									setVisibleProf(!visibleFaculty)
-								}
+								checked={visibleFaculty}
+								onChange={() => setVisibleProf(!visibleFaculty)}
 							/>
 						</div>
 						<div className="form-group checkbox-inline">
@@ -202,38 +179,27 @@ const PostForm = ({
 							<input
 								type="checkbox"
 								name="alumni"
-								checked={visibleAlumni ? true : false}
-								value={visibleAlumni}
-								id="alumni"
-								onChange={(e) =>
-									setVisibleAlumni(!visibleAlumni)
-								}
+								checked={visibleAlumni}
+								onChange={() => setVisibleAlumni(!visibleAlumni)}
 							/>
 						</div>
 						<div className="form-group">
-							<p
-								style={{ fontSize: "1.2rem" }}
-								className="secondary-text"
-							>
-								Select Channel
-							</p>
-							<select
-								name="channel"
-								id="channel"
-								className="form-dropdown"
-								value={channel}
-								onChange={(event) =>
-									setChannel(event.target.value)
+							<label>
+								Select Channel <span style={{ color: "red" }}>*</span>
+							</label>
+							<CreatableSelect
+								isClearable
+								options={
+									channels
+										? channels.map((c) => ({ value: c.name, label: c.name }))
+									: []
 								}
-							>
-								{channels !== null && channels.map((c) => {
-									return (
-										<option value={c.name} key={c._id}>
-											{c.name}
-										</option>
-									);
-								})}
-							</select>
+								onChange={(selectedOption) => {
+									if (selectedOption) setChannel(selectedOption.value);
+									else setChannel("");
+								}}
+								value={channel ? { value: channel, label: channel } : null}
+							/>
 						</div>
 					</div>
 					<div className="back-submit-buttons">
@@ -253,47 +219,21 @@ const PostForm = ({
 				</form>
 			</div>
 			{text !== "" && (
-				<div
-					className="container preview"
-					style={{ marginBottom: "2em" }}
-				>
+				<div className="container preview" style={{ marginBottom: "2em" }}>
 					<p>
 						<strong>Preview:</strong>
 					</p>
 					<div className="parsed-text">{parse(text)}</div>
-					{/* {image.preview && (
-						<img src={image.preview} width="100" height="100" />
-					)} */}
 				</div>
 			)}
-			<Snackbar
-				open={successOpen}
-				autoHideDuration={6000}
-				onClose={handleCloseSuccess}
-			>
-				<Alert
-					onClose={handleCloseSuccess}
-					severity="success"
-					sx={{ width: "100%" }}
-					variant="filled"
-				>
+			<Snackbar open={successOpen} autoHideDuration={6000} onClose={handleCloseSuccess}>
+				<Alert onClose={handleCloseSuccess} severity="success" sx={{ width: "100%" }} variant="filled">
 					{requireApproval ? "Post Request Sent" : "Post Created"}
 				</Alert>
 			</Snackbar>
-			<Snackbar
-				open={errorOpen}
-				autoHideDuration={6000}
-				onClose={handleCloseError}
-			>
-				<Alert
-					onClose={handleCloseError}
-					severity="error"
-					sx={{ width: "100%" }}
-					variant="filled"
-				>
-					{requireApproval
-						? "Post Request Error"
-						: "Create Post Error"}
+			<Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleCloseError}>
+				<Alert onClose={handleCloseError} severity="error" sx={{ width: "100%" }} variant="filled">
+					{requireApproval ? "Post Request Error" : "Create Post Error"}
 				</Alert>
 			</Snackbar>
 		</React.Fragment>

@@ -78,10 +78,12 @@ router.post(
 				(err, token) => {
 					if (err) throw err;
 					//Return Jsonwebtoken
+					//console.log(token);
 					res.json({
 						 token : {token} , 
 						user_data : user
 						});
+
 				}
 			);
 
