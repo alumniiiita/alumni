@@ -199,13 +199,13 @@ const adminData = new mongoose.model("user", UserSchema);
 const fun = async() =>{
 
 	const salt = await bcrypt.genSalt(10);
-	const pass = await bcrypt.hash("Vikas@123", salt);
+	const pass = await bcrypt.hash("Alumniconnect@5", salt);
 	const ppp = await new adminData({
-		email: "iit2020036@iiita.ac.in",
+		email: "alumni.office@iiita.ac.in",
 		password: pass,
 		isAdmin: true,
 		adminType : "head",
-		name: "Vikas Gupta",
+		name: "Santosh Choubey",
 		role :"Admin"
 	})
 	//const updating2 = await ppp.save();
