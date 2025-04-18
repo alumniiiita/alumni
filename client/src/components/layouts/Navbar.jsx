@@ -107,10 +107,16 @@ const Navbar = ({
         </Link>
       // </li> */}
       <li>
-        <a href="https://drive.google.com/file/d/1IOdnfY6WIyKT8bQDR8sTppR003F1XLZN/view?usp=sharing" className="navbar-link">
-          <span className="hide-sm">Download Manuals</span>
-        </a>
+        <a
+        href="/Manual.pdf"
+        className="navbar-link"
+       target="_blank"
+         rel="noopener noreferrer"
+      >
+       <span className="hide-sm">Download Manual</span>
+       </a>
       </li>
+
       <li>
         <Link
           to="/jobs"
