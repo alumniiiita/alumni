@@ -113,6 +113,7 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 					<div className="form-group">
 						<label htmlFor="enrollment_number">
 							Enrollment Number
+							<span style={{ color: "red" }}>*</span>
 						</label>
 						<input
 							type="text"
