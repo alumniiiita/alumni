@@ -166,10 +166,10 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 				onChange={onChangeSelectValue}
 				required
 			>
-				<option value="faculty">Faculty</option>
-				<option value="alumni">Staff</option>
-				<option value="alumni">Alumni</option>
-				<option value="student">Student</option>
+				<option value="faculty">Alumni</option>
+				<option value="alumni">Students</option>
+				<option value="alumni">Faculty</option>
+				<option value="student">Staff</option>
 			</select>
 		</div>
 
