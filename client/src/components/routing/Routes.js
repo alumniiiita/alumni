@@ -89,7 +89,7 @@ const Routes = () => {
 				<PrivateRoute exact path="/edit-profile" component={EditProfile} />
 				<AdminRoute exact path="/dashboard" component={AdminDash} />
 				<Route exact path="/add-achievement" component={Achievement} />
-				{/* <PrivateRoute exact path="/messenger" component={Messenger} /> */}
+		 	  <PrivateRoute exact path="/messenger" component={Messenger} />
 				<Route component={NotFound} />
 			</Switch>
 		</section>
