@@ -7,6 +7,7 @@ import { setAlert } from "../../actions/alert";
 import axios from "axios";
 import { Alert, Snackbar } from "@mui/material";
 
+
 const Achievement = ({ setAlert, submitAchievement }) => {
 	const [formInput, setFormInput] = useState({
 		name: "",
@@ -20,9 +21,9 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 	const [proof, setProof] = useState("");
 	const [successOpen, setSuccessOpen] = useState(false);
 	const [errorOpen, setErrorOpen] = useState(false);
-	const [submitting, setSubmitting] = useState(false);
+	const { name, program, passing_year, enrollment_number, rewards, award_date } =
+		formInput;
 
-	const { name, program, passing_year, enrollment_number, rewards, award_date } = formInput;
 	const history = useHistory();
 
 	const onChange = (e) =>
@@ -30,61 +31,57 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 
 	const onSubmit = async (e) => {
 		e.preventDefault();
-		setSubmitting(true);
 
-		try {
-			const formData1 = new FormData();
-			formData1.append("file", image);
+		const formData1 = new FormData();
+		formData1.append("file", image);
 
-			const formData2 = new FormData();
-			formData2.append("file", proof);
+		const formData2 = new FormData();
+		formData2.append("file", proof);
 
-			const config = {
-				headers: {
-					"Content-Type": "multipart/form-data",
-				},
-			};
+		const config = {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		};
 
-			const res1 = await axios.post(
-				`${process.env.REACT_APP_BACKEND_URL}/upload-image`,
-				formData1,
-				config
-			);
-			const res2 = await axios.post(
-				`${process.env.REACT_APP_BACKEND_URL}/upload-image`,
-				formData2,
-				config
-			);
+		const res1 = await axios.post(
+			`${process.env.REACT_APP_BACKEND_URL}/upload-image`,
+			formData1,
+			config
+		);
+		const res2 = await axios.post(
+			`${process.env.REACT_APP_BACKEND_URL}/upload-image`,
+			formData2,
+			config
+		);
 
-			const success = await submitAchievement(
-				formInput,
-				`${process.env.REACT_APP_BACKEND_URL}/awards/${res1.data}`,
-				`${process.env.REACT_APP_BACKEND_URL}/awards/${res2.data}`
-			);
+		const success = submitAchievement(
+			formInput,
+			`${process.env.REACT_APP_BACKEND_URL}/awards/${res1.data}`,
+			`${process.env.REACT_APP_BACKEND_URL}/awards/${res2.data}`
+		);
 
-			if (success) {
-				setSuccessOpen(true);
-				setTimeout(() => {
-					history.push("/");
-				}, 3000);
-			} else {
-				throw new Error("Submission failed");
-			}
-		} catch (error) {
-			console.error("Submission Error:", error);
+		if (success) {
+			setSuccessOpen(true);
+			setTimeout(() => {
+				history.push("/");
+			}, 3000);
+		} else {
 			setErrorOpen(true);
-		} finally {
-			setSubmitting(false);
 		}
 	};
 
-	const handleCloseSuccess = () => setSuccessOpen(false);
-	const handleCloseError = () => setErrorOpen(false);
+	const handleCloseSuccess = () => {
+		setSuccessOpen(false);
+	};
+	const handleCloseError = () => {
+		setErrorOpen(false);
+	};
 
 	return (
 		<React.Fragment>
 			<div className="form-container">
-				<form className="form" onSubmit={onSubmit}>
+				<form className="form" onSubmit={(e) => onSubmit(e)}>
 					<div style={{ paddingBottom: "1em", color: "red" }}>
 						<strong>
 							Note: If you are an ALUMNI and you have achieved any
@@ -116,7 +113,7 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 					<div className="form-group">
 						<label htmlFor="enrollment_number">
 							Enrollment Number
-							<span style={{ color: "red" }}>*</span>
+							
 						</label>
 						<input
 							type="text"
@@ -145,8 +142,8 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 							<option value="btech-ece">B.Tech ECE</option>
 							<option value="mtech">M.Tech</option>
 							<option value="mba">MBA</option>
-							<option value="ms">MS</option>
-							<option value="dual">Dual-Degree</option>
+							<option value="mba">MS</option>
+							<option value="mba">Dual-Degree</option>
 							<option value="phd">PHD</option>
 						</select>
 					</div>
@@ -226,33 +223,40 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 					<div className="form-group">
 						<input
 							type="submit"
-							value={submitting ? "Submitting..." : "Submit"}
+							value="Submit"
 							className="btn btn-primary"
-							disabled={submitting}
 						/>
 					</div>
 				</form>
 			</div>
 
-			<Snackbar open={successOpen} autoHideDuration={6000} onClose={handleCloseSuccess}>
+			<Snackbar
+				open={successOpen}
+				autoHideDuration={6000}
+				onClose={handleCloseSuccess}
+			>
 				<Alert
 					onClose={handleCloseSuccess}
 					severity="success"
 					sx={{ width: "100%" }}
 					variant="filled"
 				>
-					Achievement submitted successfully!
+					Submit Success !!
 				</Alert>
 			</Snackbar>
 
-			<Snackbar open={errorOpen} autoHideDuration={6000} onClose={handleCloseError}>
+			<Snackbar
+				open={errorOpen}
+				autoHideDuration={6000}
+				onClose={handleCloseError}
+			>
 				<Alert
 					onClose={handleCloseError}
 					severity="error"
 					sx={{ width: "100%" }}
 					variant="filled"
 				>
-					There was an error submitting the achievement.
+					Submit Error !!
 				</Alert>
 			</Snackbar>
 		</React.Fragment>
