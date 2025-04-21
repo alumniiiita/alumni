@@ -21,9 +21,9 @@ const Navbar = ({
         </Link>
       </li>
       <li>
-        <a href="/https://nano-media.netlify.app" className="navbar-link">
+        <Link to="/messenger" className="navbar-link">
           <span className="hide-sm">Messenger</span>
-        </a>
+        </Link>
       </li>
       <li>
         <Link
