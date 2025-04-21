@@ -107,6 +107,11 @@ const Navbar = ({
         </Link>
       // </li> */}
       <li>
+        <Link to="/messenger" className="navbar-link">
+          <span className="hide-sm">Messenger</span>
+        </Link>
+      </li>
+      <li>
         <a
         href="/Manual.pdf"
         className="navbar-link"
