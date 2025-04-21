@@ -113,7 +113,7 @@ const Navbar = ({
       </li>
       <li>
         <a
-        href="/Manual_ver_#1.pdf"
+        href="/Manual.pdf"
         className="navbar-link"
        target="_blank"
          rel="noopener noreferrer"
