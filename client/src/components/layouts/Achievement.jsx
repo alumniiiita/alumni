@@ -138,9 +138,10 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 						>
 							<option value="btech-it">B.Tech IT</option>
 							<option value="btech-ece">B.Tech ECE</option>
-							<option value="btech-itbi">B.Tech IT-BI</option>
 							<option value="mtech">M.Tech</option>
 							<option value="mba">MBA</option>
+							<option value="mba">MS</option>
+							<option value="mba">Dual-Degree</option>
 							<option value="phd">PHD</option>
 						</select>
 					</div>
