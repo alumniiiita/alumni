@@ -107,10 +107,10 @@ const Messenger = ({
 			<div className="messenger">
 				<div className="chatMenu">
 					<div className="chatMenuWrapper">
-						{/* <input
+						<input
 							placeholder="Search for friends"
 							className="chatMenuInput"
-						/> */}
+						/>
 						<p><strong>Active Conversations</strong></p>
 						{conversations.map((c) => (
 							<div
