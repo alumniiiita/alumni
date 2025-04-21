@@ -6,6 +6,7 @@ import { useHistory } from "react-router-dom";
 import { setAlert } from "../../actions/alert";
 import axios from "axios";
 import { Alert, Snackbar } from "@mui/material";
+import RewardsInput from "./RewardsInput";
 
 const Achievement = ({ setAlert, submitAchievement }) => {
 	const [formInput, setFormInput] = useState({
@@ -167,18 +168,7 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 							Awards / Achievements{" "}
 							<span style={{ color: "red" }}>*</span>
 						</label>
-						<textarea
-							className="form-group"
-							name="rewards"
-							id="rewards"
-							rows="12"
-							required
-							value={rewards}
-							onChange={onChange}
-							placeholder={
-								"Please Enter details in the following format:\n\nTitle of Award:\n\nType of Award:\n\nName of Awarding Organisation:\n\nReceived Jointly / Solo:\n\nCash Prize Received:"
-							}
-						/>
+						<RewardsInput/>
 					</div>
 
 					<div className="form-group">
