@@ -103,7 +103,7 @@ const Messenger = ({
 
 	return (
 		<React.Fragment>
-			<Topbar />
+			{/* <Topbar /> */}
 			<div className="messenger">
 				<div className="chatMenu">
 					<div className="chatMenuWrapper">
