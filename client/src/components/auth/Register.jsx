@@ -24,8 +24,7 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 		organisation: "",
 		location: "",
 		department: "it",
-		working_area: "public_sector",
-		linkedinId: "" // Added LinkedIn ID
+		working_area: "public_sector"
 	});
 
 	const {
@@ -41,8 +40,7 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 		organisation,
 		location,
 		department,
-		working_area,
-		linkedinId // Extract LinkedIn ID from state
+		working_area
 	} = formInput;
 
 	const [showStudentFields, setShowStudentFields] = useState(true);
@@ -90,8 +88,7 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 				organisation,
 				location,
 				department,
-				working_area,
-				linkedinId // Send LinkedIn ID in payload
+				working_area
 			});
 			console.log(success);
 			if (success) {
@@ -253,13 +250,117 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 				</div>
 			</React.Fragment>
 		)}
+        {showAlumniFields && (
+					<React.Fragment>
+						<div className="form-group">
+							<p>Select your Working Area</p>
+							<select
+								name="working_area"
+								id="wordking_area"
+								className="form-dropdown"
+								value={working_area}
+								onChange={(event) => onChange(event)}
+							>
+								<option value="public_sector">
+									Public Sector
+								</option>
+								<option value="business">
+									Business/Entrepreneurship
+								</option>
+								<option value="private_sector">
+									Private Sector
+								</option>
+								<option value="mba_finance">MBA/Finance</option>
+								<option value="academic_area">
+									Academic Area
+								</option>
+								<option value="higher_studies">
+									Higher Studies
+								</option>
+								<option value="other">Other</option>
+							</select>
+						</div>
+						<div className="form-group">
+							<input
+								type="text"
+								name="organisation"
+								id="organisation"
+								value={organisation}
+								placeholder="Enter your Organisation/Institute Name"
+								onChange={(event) => onChange(event)}
+								required
+							/>
+						</div>
+						<div className="form-group">
+							<input
+								type="text"
+								name="location"
+								id="location"
+								value={location}
+								placeholder="Location"
+								onChange={(event) => onChange(event)}
+								required
+							/>
+						</div>
+					</React.Fragment>
+				)}
+				{(showFacultyFields || showAlumniFields) && (
+					<React.Fragment>
+						<div className="form-group">
+							<input
+								type="text"
+								name="designation"
+								id="designation"
+								value={designation}
+								placeholder="Enter your Designation/Position"
+								onChange={(event) => onChange(event)}
+								required
+							/>
+						</div>
+					</React.Fragment>
+				)}
+				{showAlumniFields && (
+					<div style={{ paddingBottom: "1em", color: "red" }}>
+						<strong>
+							Note: It is mandatory to fill your information on
+							alumni.iiita.ac.in, without which your join request
+							won't be accepted.
+						</strong>
+					</div>
+				)}
+				{showFacultyFields && (
+					<React.Fragment>
+						<div className="form-group">
+							<select
+								className="form-dropdown"
+								name="department"
+								id="department"
+								value={department}
+								onChange={(event) => onChange(event)}
+							>
+								<option value="it">
+									Information Technology
+								</option>
+								<option value="ece">
+									Electronics and Communications
+								</option>
+								<option value="management">
+									Management Studies
+								</option>
+								<option value="applied_science">
+									Applied Sciences
+								</option>
+							</select>
+						</div>
+					</React.Fragment>
+				)}
 
-		<input
-			type="submit"
-			className="btn btn-primary"
-			value="Sign Up"
-		/>
-	</form>
+	          	<input
+		         	type="submit"
+		        	className="btn btn-primary"
+		        	value="Sign Up"
+		         />
+	       </form>
 
 	<p className="my-1">
 		Already have an account ? <Link to="/login">Login</Link>
