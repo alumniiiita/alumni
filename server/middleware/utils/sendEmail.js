@@ -35,8 +35,15 @@ const createTransporter = async () => {
 };
 
 module.exports = sendEmail = async (emailOptions) => {
-	let emailTransporter = await createTransporter();
-	await emailTransporter.sendMail(emailOptions);
+	try {
+		const transporter = await createTransporter();
+		let info = await transporter.sendMail(emailOptions);
+		console.log("Email sent: ", info.response);
+	} catch (err) {
+		console.error("Failed to send email:", err.message);
+		throw err; // rethrow for controller to catch
+	}
 };
+
 
 // https://dev.to/chandrapantachhetri/sending-emails-securely-using-node-js-nodemailer-smtp-gmail-and-oauth2-g3a
