@@ -167,9 +167,9 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 				required
 			>
 				<option value="faculty">Alumni</option>
-				<option value="alumni">Students</option>
+				<option value="student">Students</option>
 				<option value="alumni">Faculty</option>
-				<option value="student">Staff</option>
+				<option value="faculty">Staff</option>
 			</select>
 		</div>
 
