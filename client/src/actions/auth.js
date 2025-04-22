@@ -60,7 +60,7 @@ export const login =
 			dispatch(loadUser());
 		} catch (e) {
 			console.log(e.response);
-			const errors = e.response.data.errors;
+			const errors = e?.response?.data?.errors;
 			if (errors) {
 				errors.forEach((err) => {
 					dispatch(setAlert(err.msg, "danger"));
@@ -141,7 +141,7 @@ export const register =
 			dispatch(loadUser());
 			return 1;
 		} catch (e) {
-			const errors = e.response?.data.errors;
+			const errors = e?.response?.data?.errors;
 			if (errors) {
 				errors.forEach((err) => {
 					dispatch(setAlert(err.msg, "danger"));
