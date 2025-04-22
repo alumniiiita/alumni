@@ -127,9 +127,14 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 		</div>
 
 		<div className="form-group">
-			<label htmlFor="email">
-				Email Address <span style={{ color: "red" }}>*</span>
-			</label>
+		<label htmlFor="email">
+            Email Address <span style={{ color: "red" }}>*</span>
+        <br />
+        <small style={{ color: "gray" }}>
+        (Students must register using their college email ID, e.g., iit2020xxx@iiita.ac.in)
+        </small>
+        </label>
+
 			<input
 				type="email"
 				placeholder="Email address"
@@ -141,19 +146,6 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 				onChange={onChange}
 			/>
 		</div>
-
-		<div className="form-group">
-			<label htmlFor="linkedinId">LinkedIn ID (optional)</label>
-			<input
-				type="text"
-				placeholder="LinkedIn ID"
-				name="linkedinId"
-				id="linkedinId"
-				value={linkedinId}
-				onChange={onChange}
-			/>
-		</div>
-
 		<div className="form-group">
 			<label htmlFor="role">
 				Choose your role <span style={{ color: "red" }}>*</span>
