@@ -13,8 +13,15 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 		enrollment_number: "",
 		program: "btech-it",
 		passing_year: "",
-		rewards: "",
 		award_date: "",
+	});
+
+	const [reward, setReward] = useState({
+		title: "",
+		type: "",
+		organization: "",
+		receivedBy: "",
+		cashPrize: "",
 	});
 
 	const [image, setImage] = useState("");
@@ -22,15 +29,6 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 	const [loading, setLoading] = useState(false);
 	const [successOpen, setSuccessOpen] = useState(false);
 	const [errorOpen, setErrorOpen] = useState(false);
-
-	const {
-		name,
-		program,
-		passing_year,
-		enrollment_number,
-		rewards,
-		award_date,
-	} = formInput;
 
 	const history = useHistory();
 
@@ -42,11 +40,7 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 		setLoading(true);
 
 		try {
-			const config = {
-				headers: {
-					"Content-Type": "multipart/form-data",
-				},
-			};
+			const config = { headers: { "Content-Type": "multipart/form-data" } };
 
 			const formData1 = new FormData();
 			formData1.append("file", image);
@@ -65,7 +59,7 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 			);
 
 			const success = await submitAchievement(
-				formInput,
+				{ ...formInput, reward },
 				`${process.env.REACT_APP_BACKEND_URL}/awards/${res1.data}`,
 				`${process.env.REACT_APP_BACKEND_URL}/awards/${res2.data}`
 			);
@@ -74,9 +68,7 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 
 			if (success) {
 				setSuccessOpen(true);
-				setTimeout(() => {
-					history.push("/");
-				}, 3000);
+				setTimeout(() => history.push("/"), 3000);
 			} else {
 				setErrorOpen(true);
 			}
@@ -86,66 +78,41 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 		}
 	};
 
-	const handleCloseSuccess = () => setSuccessOpen(false);
-	const handleCloseError = () => setErrorOpen(false);
-
 	return (
-		<React.Fragment>
+		<>
 			<div className="form-container">
 				<form className="form" onSubmit={onSubmit}>
-					<div style={{ paddingBottom: "1em", color: "red" }}>
-						<strong>
-							Note: If you are an ALUMNI and you have achieved any
-							patent / reward / recognition, then you can fill out
-							this form to let the institute know of your
-							achievement.
-						</strong>
-					</div>
-
 					<p style={{ color: "red", marginBottom: "1em" }}>
 						<span>*</span> Indicates required field
 					</p>
 
 					<div className="form-group">
-						<label htmlFor="name">
-							Name <span style={{ color: "red" }}>*</span>
-						</label>
+						<label>Name *</label>
 						<input
 							type="text"
 							name="name"
-							id="name"
-							placeholder="Name"
-							value={name}
+							value={formInput.name}
 							required
 							onChange={onChange}
 						/>
 					</div>
 
 					<div className="form-group">
-						<label htmlFor="enrollment_number">
-							Enrollment Number <span style={{ color: "red" }}>*</span>
-						</label>
+						<label>Enrollment Number *</label>
 						<input
 							type="text"
 							name="enrollment_number"
-							id="enrollment_number"
-							placeholder="Enrollment Number"
-							value={enrollment_number}
+							value={formInput.enrollment_number}
 							required
 							onChange={onChange}
 						/>
 					</div>
 
 					<div className="form-group">
-						<label htmlFor="program">
-							Choose your Academic Program{" "}
-							<span style={{ color: "red" }}>*</span>
-						</label>
+						<label>Program *</label>
 						<select
 							name="program"
-							id="program"
-							className="form-dropdown"
-							value={program}
+							value={formInput.program}
 							required
 							onChange={onChange}
 						>
@@ -160,59 +127,87 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 					</div>
 
 					<div className="form-group">
-						<label htmlFor="passing_year">
-							Passout Year <span style={{ color: "red" }}>*</span>
-						</label>
+						<label>Passout Year *</label>
 						<input
 							type="number"
-							min="1995"
 							name="passing_year"
-							id="passing_year"
-							placeholder="Passout Year"
-							value={passing_year}
+							value={formInput.passing_year}
 							required
+							min="1995"
 							onChange={onChange}
 						/>
 					</div>
 
 					<div className="form-group">
-						<label htmlFor="rewards">
-							Awards / Achievements{" "}
-							<span style={{ color: "red" }}>*</span>
-						</label>
-						<textarea
-							className="form-group"
-							name="rewards"
-							id="rewards"
-							rows="12"
+						<label>Date of Award *</label>
+						<input
+							type="date"
+							name="award_date"
+							value={formInput.award_date}
 							required
-							value={rewards}
 							onChange={onChange}
-							placeholder={
-								"Please Enter details in the following format:\n\nTitle of Award:\n\nType of Award:\n\nName of Awarding Organisation:\n\nReceived Jointly / Solo:\n\nCash Prize Received:"
+						/>
+					</div>
+
+					<h4>Reward Details</h4>
+					<div className="form-group">
+						<label>Title of Award *</label>
+						<input
+							type="text"
+							value={reward.title}
+							required
+							onChange={(e) =>
+								setReward({ ...reward, title: e.target.value })
+							}
+						/>
+					</div>
+					<div className="form-group">
+						<label>Type of Award *</label>
+						<input
+							type="text"
+							value={reward.type}
+							required
+							onChange={(e) =>
+								setReward({ ...reward, type: e.target.value })
+							}
+						/>
+					</div>
+					<div className="form-group">
+						<label>Name of Awarding Organisation *</label>
+						<input
+							type="text"
+							value={reward.organization}
+							required
+							onChange={(e) =>
+								setReward({ ...reward, organization: e.target.value })
+							}
+						/>
+					</div>
+					<div className="form-group">
+						<label>Received Jointly / Solo *</label>
+						<input
+							type="text"
+							value={reward.receivedBy}
+							required
+							onChange={(e) =>
+								setReward({ ...reward, receivedBy: e.target.value })
+							}
+						/>
+					</div>
+					<div className="form-group">
+						<label>Cash Prize Received *</label>
+						<input
+							type="text"
+							value={reward.cashPrize}
+							required
+							onChange={(e) =>
+								setReward({ ...reward, cashPrize: e.target.value })
 							}
 						/>
 					</div>
 
 					<div className="form-group">
-						<label htmlFor="award_date">
-							Date of Award <span style={{ color: "red" }}>*</span>
-						</label>
-						<input
-							type="date"
-							name="award_date"
-							id="award_date"
-							value={award_date}
-							required
-							onChange={onChange}
-						/>
-					</div>
-
-					<div className="form-group">
-						<label>
-							Your photo receiving the award / Any Passport photo
-							(Supported formats: .png, .jpg, .jpeg)
-						</label>
+						<label>Photo (jpg/png/jpeg)</label>
 						<input
 							type="file"
 							accept="image/*"
@@ -221,24 +216,20 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 					</div>
 
 					<div className="form-group">
-						<label>
-							Certificate / Proof of Achievement (Supported formats: .pdf, .png, .jpg, .jpeg)
-						</label>
+						<label>Proof (pdf/image)</label>
 						<input
 							type="file"
-							accept="application/pdf, image/*"
+							accept="application/pdf,image/*"
 							onChange={(e) => setProof(e.target.files[0])}
 						/>
 					</div>
 
-					<div className="form-group">
-						<input
-							type="submit"
-							value={loading ? "Submitting..." : "Submit"}
-							className="btn btn-primary"
-							disabled={loading}
-						/>
-					</div>
+					<input
+						type="submit"
+						value={loading ? "Submitting..." : "Submit"}
+						className="btn btn-primary"
+						disabled={loading}
+					/>
 
 					{loading && (
 						<div style={{ marginTop: "1em", color: "blue" }}>
@@ -249,36 +240,18 @@ const Achievement = ({ setAlert, submitAchievement }) => {
 				</form>
 			</div>
 
-			<Snackbar
-				open={successOpen}
-				autoHideDuration={6000}
-				onClose={handleCloseSuccess}
-			>
-				<Alert
-					onClose={handleCloseSuccess}
-					severity="success"
-					sx={{ width: "100%" }}
-					variant="filled"
-				>
-					Submit Success !!
+			<Snackbar open={successOpen} autoHideDuration={6000} onClose={() => setSuccessOpen(false)}>
+				<Alert onClose={() => setSuccessOpen(false)} severity="success" variant="filled">
+					Achievement submitted successfully!
 				</Alert>
 			</Snackbar>
 
-			<Snackbar
-				open={errorOpen}
-				autoHideDuration={6000}
-				onClose={handleCloseError}
-			>
-				<Alert
-					onClose={handleCloseError}
-					severity="error"
-					sx={{ width: "100%" }}
-					variant="filled"
-				>
-					Submit Error !!
+			<Snackbar open={errorOpen} autoHideDuration={6000} onClose={() => setErrorOpen(false)}>
+				<Alert onClose={() => setErrorOpen(false)} severity="error" variant="filled">
+					Submission failed. Please try again.
 				</Alert>
 			</Snackbar>
-		</React.Fragment>
+		</>
 	);
 };
 

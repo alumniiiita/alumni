@@ -17,12 +17,16 @@ const AchievementSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
-	rewards: {
-		type: String,
-		required: true,
+	reward: {
+		title: { type: String, required: true },
+		type: { type: String, required: true },
+		organization: { type: String, required: true },
+		receivedBy: { type: String, required: true },
+		cashPrize: { type: String, required: true },
 	},
 	award_date: {
 		type: String,
+		required: true,
 	},
 	imgUrl: {
 		type: String,
@@ -32,4 +36,4 @@ const AchievementSchema = new mongoose.Schema({
 	},
 });
 
-module.exports = Achievement = mongoose.model("achievement", AchievementSchema);
+module.exports = mongoose.model("achievement", AchievementSchema);

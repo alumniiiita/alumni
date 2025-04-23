@@ -9,28 +9,41 @@ const receiveMail = require("../../middleware/utils/receiveMail");
 
 router.post("/add-achievement", async (req, res) => {
 	const { formInput, imgUrl, proofUrl } = req.body;
-	const { name, enrollment_number, program, passing_year, rewards, award_date } =
-		formInput;
+	const {
+		name,
+		enrollment_number,
+		program,
+		passing_year,
+		award_date,
+		reward, // updated
+	} = formInput;
 
 	try {
-		achievement_object = new Achievement({
+		const achievement = new Achievement({
 			name,
 			enrollment_number,
 			program,
 			passing_year,
-			rewards,
 			award_date,
+			reward: {
+				title: reward.title,
+				type: reward.type,
+				organization: reward.organization,
+				receivedBy: reward.receivedBy,
+				cashPrize: reward.cashPrize,
+			},
 			imgUrl,
 			proofUrl,
 		});
-		const savedAchievement = await achievement_object.save();
-		// console.log(savedAchievement);
+
+		const savedAchievement = await achievement.save();
 		res.json(savedAchievement);
 	} catch (err) {
-		console.error("error saving achievement to DB");
+		console.error("Error saving achievement to DB:", err.message);
 		res.status(500).json({ errors: [{ msg: "Server Error" }] });
 	}
 });
+
 
 router.post("/submit-feedback", async (req, res) => {
 	const { name, email, role, feedback } = req.body;
