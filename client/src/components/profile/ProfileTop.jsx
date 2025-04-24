@@ -30,7 +30,7 @@ const ProfileTop = ({
           <img
             key={profile.images[0]}
             alt="uploaded_image"
-            src={`http://localhost:5000/awards/${profile.images[0]}`}
+            src={`https://alumni-nrvg.onrender.com/awards/${profile.images[0]}`}
             style={{
               maxHeight: "100px",
               maxWidth: "100px",

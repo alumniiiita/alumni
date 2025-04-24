@@ -65,7 +65,7 @@ const PostDisplay = ({
 										<img
 											key={image_name}
 											alt="uploaded_image"
-											src={`http://localhost:5000/awards/${image_name}`}
+											src={`https://alumni-nrvg.onrender.com/awards/${image_name}`}
 											style={{
 												maxHeight: "500px",
 												maxWidth: "700px",

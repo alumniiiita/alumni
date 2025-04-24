@@ -64,7 +64,7 @@ const PostRequestCard = ({
 						request.images.map((image_name) => {
 							return (
 								<img
-									src={`http://localhost:5000/awards/${image_name}`}
+									src={`https://alumni-nrvg.onrender.com/awards/${image_name}`}
 									style={{
 										height: "500px",
 										width: "700px",

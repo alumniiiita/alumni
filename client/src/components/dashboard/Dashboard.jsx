@@ -34,7 +34,7 @@ const Dashboard = ({ closeSideNav, auth: { authUser, loadingAuth } }) => {
                 <img
                   key={authUser.images[0]}
                   alt="Profile"
-                  src={`http://localhost:5000/awards/${authUser.images[0]}`}
+                  src={`https://alumni-nrvg.onrender.com/awards/${authUser.images[0]}`}
                   style={{
                     height: "100px",
                     width: "100px",
