@@ -9,25 +9,26 @@ const Help = ({ submitFeedback }) => {
 		role: "student",
 		feedback: "",
 	});
+	const [loading, setLoading] = useState(false);
 
 	const { name, email, role, feedback } = formInput;
 
 	const onChange = (e) =>
 		setFormInput({ ...formInput, [e.target.name]: e.target.value });
 
-	const onSubmit = (e) => {
+	const onSubmit = async (e) => {
 		e.preventDefault();
-		const status = submitFeedback(formInput);
-		setTimeout(() => {
-			if (status) {
-				setFormInput({
-					name: "",
-					email: "",
-					role: "student",
-					feedback: "",
-				});
-			}
-		}, 1500);
+		setLoading(true);
+		const status = await submitFeedback(formInput);
+		setLoading(false);
+		if (status) {
+			setFormInput({
+				name: "",
+				email: "",
+				role: "student",
+				feedback: "",
+			});
+		}
 	};
 
 	return (
@@ -42,7 +43,7 @@ const Help = ({ submitFeedback }) => {
 							<span>*</span> Indicates required field
 						</p>
 					</div>
-					<form className="form" onSubmit={(e) => onSubmit(e)}>
+					<form className="form" onSubmit={onSubmit}>
 						<div className="form-group">
 							<label htmlFor="name">
 								Name <span style={{ color: "red" }}>*</span>
@@ -59,8 +60,7 @@ const Help = ({ submitFeedback }) => {
 						</div>
 						<div className="form-group">
 							<label htmlFor="email">
-								Email Address{" "}
-								<span style={{ color: "red" }}>*</span>
+								Email Address <span style={{ color: "red" }}>*</span>
 							</label>
 							<input
 								type="email"
@@ -74,8 +74,7 @@ const Help = ({ submitFeedback }) => {
 						</div>
 						<div className="form-group">
 							<label htmlFor="role">
-								Select your role{" "}
-								<span style={{ color: "red" }}>*</span>
+								Select your role <span style={{ color: "red" }}>*</span>
 							</label>
 							<select
 								name="role"
@@ -92,8 +91,7 @@ const Help = ({ submitFeedback }) => {
 						</div>
 						<div className="form-group">
 							<label htmlFor="feedback">
-								Your Feedback{" "}
-								<span style={{ color: "red" }}>*</span>
+								Your Feedback <span style={{ color: "red" }}>*</span>
 							</label>
 							<textarea
 								name="feedback"
@@ -107,10 +105,20 @@ const Help = ({ submitFeedback }) => {
 						<div className="form-group">
 							<input
 								type="submit"
-								value="Submit"
+								value={loading ? "Submitting..." : "Submit"}
 								className="btn btn-primary"
+								disabled={loading}
 							/>
 						</div>
+						{loading && (
+							<div style={{ marginTop: "1em", color: "blue" }}>
+								<i
+									className="fa fa-spinner fa-spin"
+									style={{ marginRight: "8px" }}
+								></i>
+								Submitting your feedback...
+							</div>
+						)}
 					</form>
 				</div>
 				<div
@@ -119,10 +127,7 @@ const Help = ({ submitFeedback }) => {
 				>
 					<h5 className="text-primary">Contact us:</h5>
 					<div className="help-section help-location-div">
-						<i
-							className="fas fa-map-marker-alt location-icon"
-							aria-hidden="false"
-						></i>
+						<i className="fas fa-map-marker-alt location-icon" />
 						<p className="contact-info">
 							Office of Alumni Affairs Admin Extension-1, IIIT
 							Allahabad, Devghat, Jhalwa Prayagraj - 211015 Uttar
@@ -130,17 +135,14 @@ const Help = ({ submitFeedback }) => {
 						</p>
 					</div>
 					<div className="help-section help-mail-div">
-						<i className="fa fa-envelope mail-icon"></i>
+						<i className="fa fa-envelope mail-icon" />
 						<div className="contact-info">
 							<p>alumni.coordinator@iiita.ac.in</p>
 							<p>alumni.connect@iiita.ac.in</p>
 						</div>
 					</div>
 					<div className="help-section help-phone-div">
-						<i
-							className="fa fa-phone phone-icon"
-							aria-hidden="true"
-						></i>
+						<i className="fa fa-phone phone-icon" />
 						<div className="contact-info">
 							<p>(91) 0532 292 2599/2308</p>
 							<p>(91) 7317319062</p>
