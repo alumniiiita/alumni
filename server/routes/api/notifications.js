@@ -34,7 +34,7 @@ router.post("/getNotifications", async (req, res) => {
     }
 
     const data = await Notification.find();
-
+   
     res.json({data , ID});
   } catch (e) {
     console.log(e);

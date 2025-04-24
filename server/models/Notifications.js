@@ -38,7 +38,7 @@ const fun = async() =>{
         Event_link: "saf",
 		
 	})
-	const updating2 = await ppp.save();
+	//const updating2 = await ppp.save();
 }
 
 // fun();

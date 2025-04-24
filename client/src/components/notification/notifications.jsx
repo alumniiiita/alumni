@@ -75,7 +75,9 @@ const Notifications = () => {
         id="dropdown-size-small"
       >
         {noti.map((ele, i) => {
+          console.log(ele.Notification_link)
           return (
+            
             <Link to={ele.Notification_link} style={{ textDecoration: 'none' }}>
               <Dropdown.Item
                 as={Link}
