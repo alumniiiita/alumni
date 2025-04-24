@@ -12,6 +12,8 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 
 	const history = useHistory();
 	const [loading, setLoading] = useState(false);
+	const [pendingApproval, setPendingApproval] = useState(false);
+
 
 	const [formInput, setFormInput] = useState({
 		name: "",
@@ -95,10 +97,23 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 		setLoading(false);
 
 		if (success) {
-			setTimeout(() => {
-				history.push("/");
-			}, 2000);
-		}
+			setFormInput({
+				name: "",
+				email: "",
+				password: "",
+				password_confirm: "",
+				role: "student",
+				program: "btech-it",
+				starting_year: "",
+				passing_year: "",
+				designation: "",
+				organisation: "",
+				location: "",
+				department: "it",
+				working_area: "public_sector",
+			});
+			setPendingApproval(true);
+		}		
 	};
 
 	return (
@@ -362,6 +377,12 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 						Sending join request for approval...
 					</div>
 				)}
+				{pendingApproval && (
+                  	<div style={{ marginTop: "1em", color: "green", fontWeight: "bold" }}>
+	                 	Your account has been registered successfully! Please wait for admin approval.
+	                </div>
+                )}
+
 			</form>
 
 			<p className="my-1">

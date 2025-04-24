@@ -29,6 +29,12 @@ const UserSchema = new mongoose.Schema({
 	avatar: {
 		type: String,
 	},
+	friends:[String],
+	blocked:[String],
+	online:{
+      type:Boolean,
+	  default:false
+	},
 	isAdmin: {
 		type: Boolean,
 		default: false,

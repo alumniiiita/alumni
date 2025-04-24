@@ -5,6 +5,11 @@ const ConversationSchema = new mongoose.Schema(
 		members: {
 			type: Array,
 		},
+		isGroup:{
+			type:Boolean,
+			default: false
+		},
+		name: String
 	},
 	{ timestamps: true }
 );
