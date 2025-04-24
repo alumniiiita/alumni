@@ -44,7 +44,7 @@ router.post("/create-event", async (req, res) => {
       created_by_user: "Admin",
       userID: "6410b5e74dd13341a89a1bb2",
       Notification_name: "Event " + req.body.event_name,
-      Notification_link: "https://alumni-connect-iiita.onrender.com/events",
+      Notification_link: "/events",
       Notification_description: req.body.description,
       Notification_post_date: Date.now(),
     });

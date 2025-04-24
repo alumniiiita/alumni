@@ -55,7 +55,7 @@ router.post("/create-job", async (req, res) => {
       created_by_user: req.body.username ,
           userID: req.body.userID,
           Notification_name: "Job :- " + req.body.job_name,
-          Notification_link: "https://alumni-connect-iiita.onrender.com/jobs",
+          Notification_link: "/jobs",
           Notification_description: req.body.description,
           Notification_post_date: Date.now()
     })
