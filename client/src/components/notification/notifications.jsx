@@ -77,22 +77,25 @@ const Notifications = () => {
         {noti.map((ele, i) => {
           return (
             <Link to={ele.Notification_link} style={{ textDecoration: 'none' }}>
-              <Dropdown.Item      
-              style={{
-               margin: "5px",
-               backgroundColor: "#e4e0e0",
-               width: "350px",
-               whiteSpace: "normal",
-                wordBreak: "break-word",
-               }}
-               >
+              <Dropdown.Item
+                as={Link}
+                to={ele.Notification_link}
+                style={{
+                 margin: "5px",
+                 backgroundColor: " #e4e0e0",
+                 width: "350px",
+                 whiteSpace: "normal",
+                 wordBreak: "break-word",
+                 }}
+                >
                {i < newNotifications ? <Badge bg="success">New</Badge> : null}
                <div className="texth1">
-                 Hi there, a new <b>{ele.Notification_name}</b> is available
-                </div>
-                Date: {ele.Notification_post_date.slice(0, 10)}{" "}
-                 {ele.Notification_post_date.slice(11, 16)}
-                </Dropdown.Item>
+                 Hi there, a new&nbsp;
+                <b>{ele.Notification_name}</b>&nbsp;is available
+               </div>
+               Date:{ele.Notification_post_date.slice(0, 10)}{" "}
+               {ele.Notification_post_date.slice(11, 16)}
+               </Dropdown.Item>
               </Link>
           );
         })}
