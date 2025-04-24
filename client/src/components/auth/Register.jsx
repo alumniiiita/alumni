@@ -379,7 +379,7 @@ const Register = ({ setAlert, register, closeSideNav, isAuthenticated }) => {
 				)}
 				{pendingApproval && (
                   	<div style={{ marginTop: "1em", color: "green", fontWeight: "bold" }}>
-	                 	Your account has been registered successfully! Please wait for admin approval.
+	                 	Registration successful! Your account is now pending approval by the admin. You will receive an email at your registered address once the approval is complete.
 	                </div>
                 )}
 
