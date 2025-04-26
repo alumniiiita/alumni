@@ -1,14 +1,13 @@
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Spinner from "../layouts/Spinner";
 import UserCard from "./UserCard";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { getUsers, getUsersByType } from "../../actions/users";
 import { closeSideNav } from "../../actions/alert";
 import UsersByType from "./UsersByType";
 
-// Custom hook to parse query parameters
 function useQuery() {
 	return new URLSearchParams(useLocation().search);
 }
@@ -23,59 +22,37 @@ const Profiles = ({
 	const [faculty, setFaculty] = useState([]);
 	const [alumni, setAlumni] = useState([]);
 	const [admins, setAdmins] = useState([]);
-	const [search, setSearch] = useState("");
 
 	const query = useQuery();
-	const history = useHistory(); // using useHistory for react-router-dom v5
-	const searchInputRef = useRef(null); // for auto-focus
-
 	const searchQuery = query.get("search");
+	const [search, setSearch] = useState("");
 
-	useEffect(() => {
+	useEffect(async () => {
 		closeSideNav();
+		const students = await getUsersByType("student");
+		setStudents(students);
 
-		const loadUsers = async () => {
-			const studentsData = await getUsersByType("student");
-			setStudents(studentsData);
+		const alumnis = await getUsersByType("alumni");
+		setAlumni(alumnis);
 
-			const alumniData = await getUsersByType("alumni");
-			setAlumni(alumniData);
+		const faculty = await getUsersByType("faculty");
+		setFaculty(faculty);
 
-			const facultyData = await getUsersByType("faculty");
-			setFaculty(facultyData);
-
-			const adminsData = await getUsersByType("admin");
-			setAdmins(adminsData);
-		};
-
-		loadUsers();
-	}, [closeSideNav, getUsersByType]);
-
-	useEffect(() => {
-		if (searchQuery) {
-			setSearch(searchQuery);
-			getUsers(searchQuery);
-		} else {
-			getUsers();
-		}
-	}, [searchQuery, getUsers]);
-
-	useEffect(() => {
-		// Auto-focus the search bar when page loads
-		if (searchInputRef.current) {
-			searchInputRef.current.focus();
-		}
+		const admins = await getUsersByType("admin");
+		setAdmins(admins);
 	}, []);
 
-	const handleSubmit = (e) => {
-		e.preventDefault(); // prevent page reload
+	useEffect(() => {
+		getUsers(searchQuery);
+	}, []);
 
-		if (search.trim()) {
-			history.push(`?search=${search}`);
-		} else {
-			history.push(`/profiles`);
+	const handleSubmit = () => {
+		if(search.trim()){
+			getUsers(searchQuery);
 		}
 	};
+
+	console.log("prof")
 
 	return (
 		<Fragment>
@@ -83,54 +60,60 @@ const Profiles = ({
 				<Spinner />
 			) : (
 				<Fragment>
-					<h1 className="large text-primary" style={{ textAlign: "center" }}>
+					<h1
+						className="large text-primary"
+						style={{ textAlign: "center" }}
+					>
 						Members
 					</h1>
 					<p className="lead" style={{ textAlign: "center" }}>
-						<i className="fab fa-connectdevelop"></i> Browse and connect with members
+						<i className="fab fa-connectdevelop"></i>Browse and
+						connect with members
 					</p>
-
-					{/* Search Bar */}
 					<div className="search-div">
-						<form className="col-12 search-form" onSubmit={handleSubmit}>
+						<form method="get" className="col-12 search-form">
 							<input
 								type="text"
+								
 								name="search"
 								id="search"
 								placeholder="Search Members..."
 								className="col-9 search-input posts-top-item"
 								value={search}
 								onChange={(e) => setSearch(e.target.value)}
-								ref={searchInputRef} // auto-focus
 							/>
 							<input
 								type="submit"
 								value="Search"
 								className="btn btn-primary col-3 posts-top-item"
+								onClick={handleSubmit}
 							/>
 						</form>
 					</div>
-
-					{/* User type stats */}
-					<div className="user-type-stats" style={{ textAlign: "center" }}>
+					<div
+						className="user-type-stats"
+						style={{ textAlign: "center" }}
+					>
 						<ul className="profile-stats">
-							<UsersByType users={alumni} label={"Alumni"} />
-							<UsersByType users={students} label={"Students"} />
-							<UsersByType users={faculty} label={"Faculty"} />
-							<UsersByType users={admins} label={"Admin"} />
+							<UsersByType users={alumni} label={"Alumni"} key="alumni_count"/>
+							<UsersByType users={students} label={"Students"} key="student_count"/>
+							<UsersByType users={faculty} label={"Faculty"} key="faculty_count"/>
+							<UsersByType users={admins} label={"Admin"} key="admin_count"/>
 						</ul>
 					</div>
-
-					{/* List of users */}
-					<h5 className="row ml-5 pb-2 mt-5" style={{ textAlign: "center" }}>
+					<h5
+						className="row ml-5 pb-2 mt-5"
+						style={{ textAlign: "center" }}
+					>
 						{users && users.length} users found
 					</h5>
-
 					<div className="container profile-page grid-container">
 						{users && users.length > 0 ? (
-							users.map((user) => (
-								<UserCard key={user._id} profile={user} />
-							))
+							users.map((user) => {
+								return (
+									<UserCard key={user._id} profile={user} />
+								);
+							})
 						) : (
 							<h4 style={{ textAlign: "center" }}>
 								No Profiles Found
