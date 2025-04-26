@@ -40,7 +40,7 @@ const DashboardActions = ({ deleteAccount, auth: { user } }) => {
 				Add Education
 			</Link>
 
-			{user && (user.role === "Admin" || user.role === "HeadAdmin") && (
+			{user && (user.role === "Admin" || user.adminType === "head") && (
 				<Link
 					to=""
 					onClick={() => {
