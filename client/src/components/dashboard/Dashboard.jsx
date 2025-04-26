@@ -15,86 +15,174 @@ const Dashboard = ({ closeSideNav, auth: { authUser, loadingAuth } }) => {
     closeSideNav();
   }, [getCurrentUserProfile]);
 
+  const containerStyle = {
+    padding: "2rem",
+    backgroundColor: "#f9fafb",
+    minHeight: "100vh",
+  };
+
+  const headerStyle = {
+    textAlign: "center",
+    marginBottom: "2rem",
+  };
+
+  const nameStyle = {
+    fontSize: "1.5rem",
+    color: "#333",
+    marginTop: "0.5rem",
+  };
+
+  const dashboardGrid = {
+    display: "flex",
+    flexWrap: "wrap",
+    gap: "2rem",
+  };
+
+  const leftPanelStyle = {
+    flex: "1",
+    minWidth: "280px",
+    backgroundColor: "white",
+    padding: "1rem",
+    borderRadius: "8px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+    height: "fit-content",
+  };
+
+  const rightPanelStyle = {
+    flex: "3",
+    minWidth: "300px",
+    backgroundColor: "white",
+    padding: "2rem",
+    borderRadius: "8px",
+    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+  };
+
+  const profileImageStyle = {
+    height: "120px",
+    width: "120px",
+    borderRadius: "50%",
+    border: "3px solid #007bff",
+    objectFit: "cover",
+    marginBottom: "1rem",
+  };
+
+  const bioStyle = {
+    fontSize: "1rem",
+    color: "#555",
+    lineHeight: "1.5",
+    marginTop: "1rem",
+  };
+
+  const buttonSkill = {
+    backgroundColor: "#007bff",
+    color: "white",
+    border: "none",
+    padding: "8px 12px",
+    margin: "5px",
+    borderRadius: "20px",
+    cursor: "pointer",
+    fontSize: "0.9rem",
+  };
+
+  const linkButton = {
+    textDecoration: "none",
+    backgroundColor: "#007bff",
+    color: "white",
+    padding: "12px 20px",
+    borderRadius: "5px",
+    display: "inline-block",
+    marginTop: "20px",
+    fontWeight: "bold",
+  };
+
+  const socialIconsStyle = {
+    fontSize: "22px",
+    marginRight: "15px",
+    color: "#555",
+    cursor: "pointer",
+  };
+
   return loadingAuth || authUser === null ? (
     <Spinner />
   ) : (
-    <React.Fragment>
-      <div style={{ textAlign: "center", padding: "20px" }}>
-        <h1 style={{ fontSize: "2rem", color: "#007bff", marginBottom: "10px" }}>Dashboard</h1>
-        <p style={{ fontSize: "1.2rem", fontWeight: "bold" }}>Welcome {authUser && authUser.name}</p>
+    <div style={containerStyle}>
+      <div style={headerStyle}>
+        <h1 style={{ fontSize: "2.5rem", color: "#007bff" }}>Dashboard</h1>
+        <p style={nameStyle}>Welcome, {authUser && authUser.name}</p>
       </div>
+
       {authUser !== null ? (
-        <div style={{ display: "flex", padding: "20px" }}>
-          <div style={{ flex: "1", padding: "10px" }}>
+        <div style={dashboardGrid}>
+          <div style={leftPanelStyle}>
             <DashboardActions />
           </div>
-          <div style={{ flex: "3", padding: "10px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "15px" }}>
+
+          <div style={rightPanelStyle}>
+            <div style={{ textAlign: "center" }}>
               {authUser.images && authUser.images.length > 0 && (
                 <img
-                  key={authUser.images[0]}
                   alt="Profile"
                   src={`https://alumni-nrvg.onrender.com/awards/${authUser.images[0]}`}
-                  style={{
-                    height: "100px",
-                    width: "100px",
-                    borderRadius: "50%",
-                    border: "2px solid #ccc",
-                    objectFit: "cover",
-                  }}
+                  style={profileImageStyle}
                 />
               )}
-              <div>
-                <h2 style={{ fontSize: "1.5rem", margin: 0 }}>{authUser.name}</h2>
-                <p style={{ fontSize: "1.2rem", color: "gray" }}>
-                  {authUser.role === "alumni" && `${authUser.designation} @ ${authUser.organisation}, ${authUser.location}`}
-                  {authUser.role === "student" && "Student @ IIITA"}
-                  {authUser.role === "faculty" && `${authUser.designation} @ Department of ${authUser.department}`}
-                </p>
-              </div>
+              <h2 style={{ fontSize: "2rem", margin: "0.5rem 0" }}>{authUser.name}</h2>
+              <p style={{ fontSize: "1.2rem", color: "#666" }}>
+                {authUser.role === "alumni" && `${authUser.designation} @ ${authUser.organisation}, ${authUser.location}`}
+                {authUser.role === "student" && "Student @ IIITA"}
+                {authUser.role === "faculty" && `${authUser.designation} @ Department of ${authUser.department}`}
+              </p>
             </div>
-            <div style={{ marginTop: "20px" }}>
+
+            <div style={{ marginTop: "2rem" }}>
               <h3>About</h3>
-              <p>{authUser.bio}</p>
-              <p><a href={authUser.website} target="_blank" rel="noopener noreferrer">{authUser.website}</a></p>
-              <div>
-                <h4>Skills:</h4>
-                {authUser.skills && authUser.skills.map((skill, index) => (
-                  <button key={index} style={{
-                    backgroundColor: "#007bff",
-                    color: "white",
-                    border: "none",
-                    padding: "5px 10px",
-                    margin: "5px",
-                    borderRadius: "5px",
-                    cursor: "pointer",
-                  }}>{skill}</button>
-                ))}
+              <p style={bioStyle}>{authUser.bio || "No bio added yet."}</p>
+
+              {authUser.website && (
+                <p>
+                  <a href={authUser.website} target="_blank" rel="noopener noreferrer" style={{ color: "#007bff" }}>
+                    {authUser.website}
+                  </a>
+                </p>
+              )}
+
+              <div style={{ marginTop: "1.5rem" }}>
+                <h4>Skills</h4>
+                {authUser.skills && authUser.skills.length > 0 ? (
+                  authUser.skills.map((skill, index) => (
+                    <button key={index} style={buttonSkill}>
+                      {skill}
+                    </button>
+                  ))
+                ) : (
+                  <p style={{ color: "gray" }}>No skills added yet.</p>
+                )}
               </div>
-              <div style={{ marginTop: "10px" }}>
-                <FontAwesomeIcon icon={["fab", "instagram"]} style={{ fontSize: "20px", marginRight: "10px" }} />
-                <FontAwesomeIcon icon={["fab", "facebook"]} style={{ fontSize: "20px" }} />
+
+              <div style={{ marginTop: "2rem" }}>
+                <FontAwesomeIcon icon={["fab", "instagram"]} style={socialIconsStyle} />
+                <FontAwesomeIcon icon={["fab", "facebook"]} style={socialIconsStyle} />
               </div>
             </div>
-            <Experience experience={authUser.experience} />
-            <Education education={authUser.education} />
+
+            <div style={{ marginTop: "2rem" }}>
+              <Experience experience={authUser.experience} />
+            </div>
+
+            <div style={{ marginTop: "2rem" }}>
+              <Education education={authUser.education} />
+            </div>
           </div>
         </div>
       ) : (
-        <div style={{ textAlign: "center", marginTop: "20px" }}>
-          <p>You have not created a profile yet</p>
-          <Link to="/create-profile" style={{
-            textDecoration: "none",
-            backgroundColor: "#007bff",
-            color: "white",
-            padding: "10px 15px",
-            borderRadius: "5px",
-            display: "inline-block",
-            marginTop: "10px",
-          }}>Create Profile</Link>
+        <div style={{ textAlign: "center" }}>
+          <p style={{ fontSize: "1.2rem", marginBottom: "1rem" }}>You have not created a profile yet.</p>
+          <Link to="/create-profile" style={linkButton}>
+            Create Profile
+          </Link>
         </div>
       )}
-    </React.Fragment>
+    </div>
   );
 };
 
