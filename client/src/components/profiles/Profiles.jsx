@@ -1,13 +1,14 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
 import Spinner from "../layouts/Spinner";
 import UserCard from "./UserCard";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useHistory } from "react-router-dom";
 import { getUsers, getUsersByType } from "../../actions/users";
 import { closeSideNav } from "../../actions/alert";
 import UsersByType from "./UsersByType";
 
+// Custom hook to parse query parameters
 function useQuery() {
 	return new URLSearchParams(useLocation().search);
 }
@@ -25,7 +26,9 @@ const Profiles = ({
 	const [search, setSearch] = useState("");
 
 	const query = useQuery();
-	const navigate = useNavigate();  // for updating URL
+	const history = useHistory(); // using useHistory for react-router-dom v5
+	const searchInputRef = useRef(null); // for auto-focus
+
 	const searchQuery = query.get("search");
 
 	useEffect(() => {
@@ -57,13 +60,20 @@ const Profiles = ({
 		}
 	}, [searchQuery, getUsers]);
 
+	useEffect(() => {
+		// Auto-focus the search bar when page loads
+		if (searchInputRef.current) {
+			searchInputRef.current.focus();
+		}
+	}, []);
+
 	const handleSubmit = (e) => {
-		e.preventDefault(); // STOP browser reload
+		e.preventDefault(); // prevent page reload
 
 		if (search.trim()) {
-			navigate(`?search=${search}`);
+			history.push(`?search=${search}`);
 		} else {
-			navigate(`/profiles`); // if search cleared, go to profiles page
+			history.push(`/profiles`);
 		}
 	};
 
@@ -91,6 +101,7 @@ const Profiles = ({
 								className="col-9 search-input posts-top-item"
 								value={search}
 								onChange={(e) => setSearch(e.target.value)}
+								ref={searchInputRef} // auto-focus
 							/>
 							<input
 								type="submit"
@@ -100,7 +111,7 @@ const Profiles = ({
 						</form>
 					</div>
 
-					{/* User Stats */}
+					{/* User type stats */}
 					<div className="user-type-stats" style={{ textAlign: "center" }}>
 						<ul className="profile-stats">
 							<UsersByType users={alumni} label={"Alumni"} />
@@ -110,7 +121,7 @@ const Profiles = ({
 						</ul>
 					</div>
 
-					{/* Profiles */}
+					{/* List of users */}
 					<h5 className="row ml-5 pb-2 mt-5" style={{ textAlign: "center" }}>
 						{users && users.length} users found
 					</h5>
