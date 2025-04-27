@@ -4,9 +4,8 @@ import { getPosts } from "../../actions/post";
 import { connect } from "react-redux";
 import Spinner from "../layouts/Spinner";
 import PostCard from "./PostCard";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { closeSideNav } from "../../actions/alert";
-import { useLocation } from "react-router-dom";
 import { getAllChannels } from "../../actions/channel";
 
 function useQuery() {
@@ -29,20 +28,16 @@ const Posts = ({
 	useEffect(() => {
 		async function getMyData() {
 			closeSideNav();
-			getAllChannels();
-			await getPosts(searchQuery, match.params.channel_name);
+			await getAllChannels();
+			// Decode the channel name safely
+			await getPosts(searchQuery, decodeURIComponent(match.params.channel_name));
 		}
 		getMyData();
 	}, [match.params.channel_name]);
 
-	// const onSubmit = (e) => {
-	// 	e.preventDefault();
-	// 	getPosts(query, match.params.channel_name);
-	// };
-
 	const searchPosts = () => {
 		if (search.trim()) {
-			getPosts(searchQuery, match.params.channel_name);
+			getPosts(search.trim(), decodeURIComponent(match.params.channel_name));
 		}
 	};
 
@@ -59,6 +54,7 @@ const Posts = ({
 					</p>
 				</div>
 				<div className="row">
+					{/* Sidebar - Channels List */}
 					<ul className="col-md-3 sidebar">
 						<li
 							style={{
@@ -70,26 +66,26 @@ const Posts = ({
 						>
 							<strong>Channels</strong>
 						</li>
-						{channels !== null && channels.map((c) => {
-							return (
-								<li
-									key={c._id}
-									className={
-										match.params.channel_name === c.name
-											? "selected-tab admin-side-panel-subitem"
-											: "admin-side-panel-subitem"
-									}
+						{channels !== null && channels.map((c) => (
+							<li
+								key={c._id}
+								className={
+									match.params.channel_name === c.name
+										? "selected-tab admin-side-panel-subitem"
+										: "admin-side-panel-subitem"
+								}
+							>
+								<Link
+									to={`/feed/topic/${encodeURIComponent(c.name)}?search=${search}`}
+									className="side-nav-channel-link"
 								>
-									<Link
-										to={`/feed/topic/${c.name}?search=${search}`}
-										className="side-nav-channel-link"
-									>
-										<span>{c.name}</span>
-									</Link>
-								</li>
-							);
-						})}
+									<span>{c.name}</span>
+								</Link>
+							</li>
+						))}
 					</ul>
+
+					{/* Main Content */}
 					<div className="content col-md-9">
 						<div className="search-div">
 							<Link
@@ -103,7 +99,7 @@ const Posts = ({
 								></i>
 								Create Post
 							</Link>
-							<form method="get" className="col-9 search-form">
+							<form method="get" className="col-9 search-form" onSubmit={(e) => { e.preventDefault(); searchPosts(); }}>
 								<input
 									type="text"
 									name="search"
@@ -117,38 +113,30 @@ const Posts = ({
 									type="submit"
 									value="Search"
 									className="btn btn-primary col-3 posts-top-item"
-									onClick={searchPosts}
 								/>
 							</form>
 						</div>
 
+						{/* Posts List */}
 						<div className="posts-list">
-							{
-							console.log("posts = ",posts) }
-							{
-							posts !== null && posts.length === 0 && (
+							{posts !== null && posts.length === 0 && (
 								<h3 style={{ textAlign: "center" }}>
 									No Posts to Display
 								</h3>
 							)}
-							{posts !== null &&
-								posts.map((pst) => {
-									if (
-										authUser !== null &&
-										(pst.visibility.includes(
-											authUser.role
-										) ||
-											pst.user === authUser._id ||
-											authUser.isAdmin)
-									) {
-										return (
-											<PostCard
-												key={pst._id}
-												post={pst}
-											/>
-										);
-									}
-								})}
+							{posts !== null && posts.map((pst) => {
+								if (
+									authUser !== null &&
+									(pst.visibility.includes(authUser.role) ||
+										pst.user === authUser._id ||
+										authUser.isAdmin)
+								) {
+									return (
+										<PostCard key={pst._id} post={pst} />
+									);
+								}
+								return null;
+							})}
 						</div>
 					</div>
 				</div>
