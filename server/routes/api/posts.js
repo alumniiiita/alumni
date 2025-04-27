@@ -108,108 +108,84 @@ router.post(
 // @access   Private
 
 router.post(
-	"/create-post",
-	[
-		auth,
-		[
-			check("text", "Body Text is required").not().isEmpty(),
-			check("heading", "Heading is required").not().isEmpty(),
-			check(
-				"visibleStudent",
-				"Student visibility value Is required"
-			).isBoolean(),
-			check(
-				"visibleFaculty",
-				"Faculty visibility value Is required"
-			).isBoolean(),
-			check(
-				"visibleAlumni",
-				"Alumni visibility value Is required"
-			).isBoolean(),
-		],
-	],
-	async (req, res) => {
-		const errors = validationResult(req);
-		if (!errors.isEmpty()) {
-			return res.status(400).json({ errors: errors.array() });
-		}
+    "/create-post",
+    [
+        auth,
+        [
+            check("text", "Body Text is required").not().isEmpty(),
+            check("heading", "Heading is required").not().isEmpty(),
+            check("visibleStudent", "Student visibility value is required").isBoolean(),
+            check("visibleFaculty", "Faculty visibility value is required").isBoolean(),
+            check("visibleAlumni", "Alumni visibility value is required").isBoolean(),
+        ],
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
 
-		const filter = new Filter();
+        const filter = new Filter();
+        const { text, heading } = req.body;
 
-		var containsBadWords =
-			filter.isProfane(req.body.text) ||
-			filter.isProfane(req.body.heading);
+        // Check for bad words
+        const containsBadWords = filter.isProfane(text) || filter.isProfane(heading);
+        if (containsBadWords) {
+            return res.status(400).json({ errors: [{ msg: "Bad word detected" }] });
+        }
 
-		if (containsBadWords) {
-			console.log();
-			return res
-				.status(400)
-				.json({ errors: [{ msg: "Bad word detected" }] });
-		}
+        try {
+            const user = await User.findById(req.user.id).select("-password");
+            const {
+                visibleStudent,
+                visibleFaculty,
+                visibleAlumni,
+                channel,
+                images,
+            } = req.body;
 
-		try {
-			const user = await User.findById(req.user.id).select("-password");
-			console.log(req.body);
-			const {
-				text,
-				heading,
-				visibleStudent,
-				visibleFaculty,
-				visibleAlumni,
-				channel,
-				images,
-			} = req.body;
+            // Build visibility array
+            const visibility = [];
+            if (visibleStudent) visibility.push("student");
+            if (visibleFaculty) visibility.push("faculty");
+            if (visibleAlumni) visibility.push("alumni");
 
-			var visible = [];
+            // ✅ Find the channel properly
+            const result_channel = await Channel.findOne({ name: channel.trim() });
+            if (!result_channel) {
+                return res.status(400).json({ errors: [{ msg: "Channel does not exist" }] });
+            }
 
-			if (visibleStudent) {
-				visible.push("student");
-			}
+            // ✅ Create the Post
+            const post = new Post({
+                user: req.user.id,
+                heading,
+                text,
+                name: user.name,
+                avatar: user.avatar,
+                visibility,
+                images,
+                channel: channel.trim(),
+            });
 
-			if (visibleAlumni) {
-				visible.push("alumni");
-			}
+            const savedPost = await post.save();
+            const post_id = savedPost._id;
 
-			if (visibleFaculty) {
-				visible.push("faculty");
-			}
+            // ✅ Update the Channel to push the post id
+            await result_channel.updateOne({
+                $push: { posts: post_id },
+            });
 
-			const result_channel = await Channel.find({ name: channel });
+            console.log("Post Created");
+            res.json(savedPost);
 
-			if (!result_channel) {
-				return res
-					.status(400)
-					.json({ errors: [{ msg: "Channel does not exists" }] });
-			}
-
-			const post = new Post({
-				user: req.user.id,
-				heading,
-				text,
-				name: user.name,
-				avatar: user.avatar,
-				visibility: visible,
-				images: images,
-				channel: channel,
-			});
-
-			const pst = await post.save();
-			const post_id = pst._id;
-
-			await Channel.findOneAndUpdate(
-				{ name: channel },
-				{
-					$push: { posts: post_id },
-				}
-			);
-			console.log("Post Created");
-			res.json(pst);
-		} catch (error) {
-			console.error(error.message);
-			res.status(500).send("Server error in Create post");
-		}
-	}
+        } catch (error) {
+            console.error(error.message);
+            res.status(500).send("Server error in Create post");
+        }
+    }
 );
+
 
 // @route    get api/posts/all
 // @desc     get all posts
