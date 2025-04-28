@@ -1,26 +1,19 @@
-// src/components/messenger/ChatWindow.jsx
-
-import React, { useEffect, useState, useRef,useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { connect } from "react-redux";
 import axios from "axios";
-import { socket } from '../../socket';
-
-
+import { socket } from "../../socket";
 
 const ChatWindow = ({ auth: { authUser } }) => {
-	const { id } = useParams(); // conversationId
-	const [messages, setMessages] = useState([]);
-	const [text, setText] = useState("");
-	const [receiverId, setReceiverId] = useState(null);
-	const scrollRef = useRef();
-	const [isGroupChat, setIsGroupChat] = useState(false);
+  const { id } = useParams();
+  const [messages, setMessages] = useState([]);
+  const [text, setText] = useState("");
+  const [receiverId, setReceiverId] = useState(null);
+  const [chatTitle, setChatTitle] = useState(""); // ✅ Group name or friend name
+  const [membersMap, setMembersMap] = useState({}); // ✅ UserId -> Name map
+  const [isGroupChat, setIsGroupChat] = useState(false);
+  const scrollRef = useRef();
 
-
-
-	//const isGroupChat = id.startsWith("group");
-	
-	  // 1) stable handler reference
   const handleReceive = useCallback(
     (data) => {
       if (data.conversationId === id) {
@@ -29,7 +22,6 @@ const ChatWindow = ({ auth: { authUser } }) => {
           { sender: data.senderId, text: data.text },
         ]);
       }
-      console.log("🔔 receiveMessage", data);
     },
     [id]
   );
@@ -37,135 +29,137 @@ const ChatWindow = ({ auth: { authUser } }) => {
   useEffect(() => {
     if (!authUser) return;
 
-    // 2) ensure socket is connected
     socket.connect();
-
-	socket.emit("addUser", authUser._id);
-
-
+    socket.emit("addUser", authUser._id);
     socket.emit("joinGroup", id);
 
-    // 3) fetch existing messages + receiver
     (async () => {
       try {
-        const res = await axios.get(
-          `${process.env.REACT_APP_BACKEND_URL}/api/messages/${id}`
-        );
+        const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/messages/${id}`);
         setMessages(res.data);
-		const conv = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/conversations/${id}`);
-		const conversation = conv.data;
-  
-		if (conversation.isGroup) {
-		  setReceiverId(null);    // No receiver for group
-		} else {
-		  const other = conversation.members.find((m) => m._id !== authUser._id);
-		  if (other) setReceiverId(other._id);
-		}
-  
-		// 🔥 Here's the fixed line:
-		setIsGroupChat(conversation.isGroup); 
+
+        const conv = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/conversations/${id}`);
+        const conversation = conv.data;
+
+        setIsGroupChat(conversation.isGroup);
+        setChatTitle(conversation.isGroup ? conversation.groupName : "");
+
+        const userMap = {};
+        conversation.members.forEach((m) => {
+          userMap[m._id] = m.name;
+        });
+        setMembersMap(userMap);
+
+        if (!conversation.isGroup) {
+          const other = conversation.members.find((m) => m._id !== authUser._id);
+          if (other) {
+            setReceiverId(other._id);
+            setChatTitle(other.name);
+          }
+        }
       } catch (err) {
         console.error("Fetch error:", err);
       }
     })();
 
-    // 4) hook up your listener
     socket.on("receiveMessage", handleReceive);
 
     return () => {
-      // 5) clean up listener & leave room
       socket.off("receiveMessage", handleReceive);
       socket.emit("leaveGroup", id);
-      // note: we do NOT disconnect here if you want the socket alive app-wide
     };
-  }, [id, authUser?._id, isGroupChat, handleReceive]);
+  }, [id, authUser?._id, handleReceive]);
 
+  const sendMessage = async (e) => {
+    e.preventDefault();
+    if (text.trim() === "") return;
 
+    try {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/messages/send`, {
+        conversationId: id,
+        text,
+      });
 
-	const sendMessage = async (e) => {
-        e.preventDefault();
-        if (text.trim() === "") return;
-    
-        try {
-            await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/messages/send`, {
-                conversationId: id,
-                text,
-            });
-            // console.log("🚀 Sending message:");
-			// console.log("senderId:", authUser._id);
-			// console.log("receiverId:", !isGroupChat ? receiverId : null);
-			// console.log("conversationId:", id);
-			// console.log("text:", text);
-			console.log("isGroup:", isGroupChat);
+      socket.emit("sendMessage", {
+        senderId: authUser._id,
+        receiverId: !isGroupChat ? receiverId : null,
+        conversationId: id,
+        text,
+        isGroup: isGroupChat,
+      });
 
-            socket.emit("sendMessage", {
-                senderId: authUser._id,
-                receiverId: !isGroupChat ? receiverId : null,
-                conversationId: id,
-                text,
-                isGroup: isGroupChat,
-            });
+      setMessages((prev) => [...prev, { sender: authUser._id, text }]);
+      setText("");
+    } catch (err) {
+      console.error("Error sending:", err.message);
+    }
+  };
 
-            
-    
-            setMessages((prev) => [...prev, { sender: authUser._id, text }]);
-            setText("");
-        } catch (err) {
-            console.error("Error sending:", err.message);
-        }
-    };
-    
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
-	useEffect(() => {
-		scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages]);
+  return (
+    <div style={{ height: "100%", display: "flex", flexDirection: "column", background: "#f4f4f4" }}>
+      {/* Header */}
+      <div style={{ padding: "1em", borderBottom: "1px solid lightgray", backgroundColor: "white", fontWeight: "bold", fontSize: "1.2rem", textAlign: "center" }}>
+        {chatTitle || "Chat"}
+      </div>
 
-	return (
-		<div style={{ height: "100%", display: "flex", flexDirection: "column" }}>
-			<div style={{ flex: 1, overflowY: "auto", padding: "1em" }}>
-				{messages.map((msg, idx) => (
-					<div
-						key={idx}
-						ref={scrollRef}
-						style={{
-							textAlign: msg.sender === authUser._id ? "right" : "left",
-							marginBottom: "1em",
-						}}
-					>
-						<div
-							style={{
-								display: "inline-block",
-								padding: "10px 15px",
-								backgroundColor: msg.sender === authUser._id ? "#DCF8C6" : "#F1F0F0",
-								borderRadius: "20px",
-								maxWidth: "60%",
-								wordWrap: "break-word",
-							}}
-						>
-							{msg.text}
-						</div>
-					</div>
-				))}
-			</div>
+      {/* Messages */}
+      <div style={{ flex: 1, overflowY: "auto", padding: "1em" }}>
+        {messages.map((msg, idx) => (
+          <div
+            key={idx}
+            ref={scrollRef}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: msg.sender === authUser._id ? "flex-end" : "flex-start",
+              marginBottom: "1em",
+            }}
+          >
+            {/* Sender Name */}
+            <div style={{ fontSize: "0.8rem", color: "gray", marginBottom: "0.2em" }}>
+              {msg.sender === authUser._id ? "You" : membersMap[msg.sender] || "Unknown"}
+            </div>
 
-			<form onSubmit={sendMessage} style={{ display: "flex", borderTop: "1px solid lightgray" }}>
-				<input
-					type="text"
-					value={text}
-					onChange={(e) => setText(e.target.value)}
-					placeholder="Type your message..."
-					style={{ flex: 1, padding: "1em", border: "none" }}
-				/>
-				<button type="submit" className="btn btn-primary" style={{ borderRadius: "0" }}>
-					Send
-				</button>
-			</form>
-		</div>
-	);
+            {/* Message Bubble */}
+            <div
+              style={{
+                padding: "10px 15px",
+                backgroundColor: msg.sender === authUser._id ? "#DCF8C6" : "#ffffff",
+                borderRadius: "15px",
+                maxWidth: "70%",
+                wordWrap: "break-word",
+                boxShadow: "0px 2px 5px rgba(0,0,0,0.1)",
+              }}
+            >
+              {msg.text}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Message Input */}
+      <form onSubmit={sendMessage} style={{ display: "flex", borderTop: "1px solid lightgray", background: "white" }}>
+        <input
+          type="text"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Type your message..."
+          style={{ flex: 1, padding: "1em", border: "none" }}
+        />
+        <button type="submit" className="btn btn-primary" style={{ borderRadius: "0" }}>
+          Send
+        </button>
+      </form>
+    </div>
+  );
 };
 
 const mapStateToProps = (state) => ({
-	auth: state.auth,
+  auth: state.auth,
 });
 
 export default connect(mapStateToProps)(ChatWindow);
