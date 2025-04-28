@@ -1,209 +1,105 @@
-import "./messenger.css";
-import Conversation from "../conversations/Conversation";
-import Message from "../message/Message";
-import ChatOnline from "../chatOnline/ChatOnline";
-import React, { useEffect, useRef, useState } from "react";
-import { connect } from "react-redux";
-import { io } from "socket.io-client";
-import PropTypes from "prop-types";
-import { closeSideNav } from "../../actions/alert";
-import {
-	getConversations,
-	getMessages,
-	sendMessage,
-	getOnlineUserData,
-} from "../../actions/chat";
+import React from "react";
+import { Route, Switch, useRouteMatch, Link, useLocation } from "react-router-dom";
+import ConversationSidebar from "./ConversationSidebar";
+import ChatWindow from "./ChatWindow";
+import CreateGroup from "./CreateGroup";
+import FriendSuggestion from "../friends/FriendSuggestion";
+import FriendRequests from "../friends/FriendRequests";
+import SentRequests from "../friends/SentRequests";
+import FriendsList from "../friends/FriendsList";
+import BlockList from "../friends/BlockList";
 
-const Messenger = ({
-	auth: { authUser, loadingAuth },
-	chat: { conversations, messages },
-	getConversations,
-	getMessages,
-	sendMessage,
-	closeSideNav,
-	getOnlineUserData,
-}) => {
-	const [currentChat, setCurrentChat] = useState(null);
-	const [messagesLocal, setMessages] = useState(messages);
-	const [newMessage, setNewMessage] = useState("");
-	const [arrivalMessage, setArrivalMessage] = useState(null);
-	const [onlineUsers, setOnlineUsers] = useState([]);
-	const socket = useRef();
-	const scrollRef = useRef();
+const Messenger = () => {
+	let { path, url } = useRouteMatch();
+	const location = useLocation();
 
-	useEffect(() => {
-		socket.current = io(`${process.env.REACT_APP_BACKEND_URL}`);
-		socket.current.on("getMessage", (data) => {
-			setArrivalMessage({
-				sender: data.senderId,
-				text: data.text,
-				createdAt: Date.now(),
-			});
-			scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-		});
-	}, []);
-
-	useEffect(() => {
-		closeSideNav();
-	}, [])
-	
-	useEffect(() => {
-		setMessages(messages);
-		scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages]);
-
-	useEffect(() => {
-		arrivalMessage &&
-			currentChat?.members.includes(arrivalMessage.sender) &&
-			setMessages((prev) => [...prev, arrivalMessage]);
-	}, [arrivalMessage, currentChat]);
-
-	useEffect(() => {
-		getConversations(authUser);
-		if (authUser !== null) {
-			socket.current.emit("addUser", authUser._id);
-			socket.current.on("getUsers", async (users) => {
-				const usersOnline = authUser.followings.filter((f) => users.some((u) => u.userId === f));
-				setOnlineUsers(usersOnline);
-			});
-		}
-	}, [authUser]);
-
-	useEffect(() => {
-		getMessages(currentChat);
-	}, [currentChat]);
-
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-		if (authUser !== null) {
-			const message = {
-				sender: authUser._id,
-				text: newMessage,
-				conversationId: currentChat._id,
-			};
-
-			const receiverId = currentChat.members.find(
-				(member) => member !== authUser._id
-			);
-
-			sendMessage(message);
-			setNewMessage("");
-			socket.current.emit("sendMessage", {
-				senderId: authUser._id,
-				receiverId,
-				text: newMessage,
-			});
-			scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-		}
-	};
-
-	useEffect(() => {
-		scrollRef.current?.scrollIntoView({ behavior: "smooth" });
-	}, [messages, arrivalMessage]);
+	// Helper to highlight active button
+	const isActive = (route) => location.pathname === route;
 
 	return (
-		<React.Fragment>
-			{/* <Topbar /> */}
-			<div className="messenger">
-				<div className="chatMenu">
-					<div className="chatMenuWrapper">
-						{/* <input
-							placeholder="Search for friends"
-							className="chatMenuInput"
-						/> */}
-						<p><strong>Active Conversations</strong></p>
-						{conversations.map((c) => (
-							<div
-								onClick={() => setCurrentChat(c)}
-								className={
-									c._id === currentChat?._id
-										? "selected-chat"
-										: ""
-								}
-							>
-								<Conversation
-									key={c._id}
-									conversation={c}
-									currentUser={authUser}
-								/>
-							</div>
-						))}
-					</div>
-				</div>
-				<div className="chatBox">
-					<div className="chatBoxWrapper">
-						{currentChat ? (
-							<React.Fragment>
-								<div className="chatBoxTop">
-									{messagesLocal.map((m) => (
-										<div ref={scrollRef}>
-											<Message
-												key={m._id}
-												message={m}
-												own={m.sender === authUser._id}
-											/>
-										</div>
-									))}
-								</div>
-								<div className="chatBoxBottom">
-									<textarea
-										className="chatMessageInput"
-										placeholder="write something..."
-										onChange={(e) =>
-											setNewMessage(e.target.value)
-										}
-										value={newMessage}
-									></textarea>
-									<button
-										className="chatSubmitButton"
-										onClick={handleSubmit}
-									>
-										Send
-									</button>
-								</div>
-							</React.Fragment>
-						) : (
-							<span className="noConversationText">
-								Open a conversation to start a chat.
-							</span>
-						)}
-					</div>
-				</div>
-				{!loadingAuth && (
-					<div className="chatOnline">
-						<p style={{marginTop:"1em", marginLeft: "1em", color:"grey", fontWeight:"500"}}>Online Friends</p>
-						<div className="chatOnlineWrapper">
-							<ChatOnline
-								onlineUsers={onlineUsers}
-								currentId={authUser._id}
-								setCurrentChat={setCurrentChat}
-								getConversations={getConversations}
-							/>
-						</div>
-					</div>
-				)}
+		<div className="messenger-container" style={{ display: "flex", height: "90vh" }}>
+			
+			{/* Sidebar */}
+			<div style={{ width: "25%", borderRight: "1px solid lightgray", overflowY: "auto", padding: "1em" }}>
+				<h3 style={{ marginBottom: "1em" }}>Messenger</h3>
+
+				<Link
+					to={`${url}`}
+					className={`btn my-1 ${isActive("/messenger") ? "btn-primary" : "btn-light"}`}
+					style={{ width: "100%" }}
+				>
+					Inbox
+				</Link>
+
+				<Link
+					to={`${url}/create-group`}
+					className={`btn my-1 ${isActive("/messenger/create-group") ? "btn-primary" : "btn-light"}`}
+					style={{ width: "100%" }}
+				>
+					Create Group
+				</Link>
+
+				<hr />
+
+				<h5>Friends</h5>
+
+				<Link
+					to={`${url}/friends/suggestions`}
+					className={`btn my-1 ${isActive("/messenger/friends/suggestions") ? "btn-primary" : "btn-light"}`}
+					style={{ width: "100%" }}
+				>
+					Find Friends
+				</Link>
+
+				<Link
+					to={`${url}/friends/requests`}
+					className={`btn my-1 ${isActive("/messenger/friends/requests") ? "btn-primary" : "btn-light"}`}
+					style={{ width: "100%" }}
+				>
+					Pending Requests
+				</Link>
+
+				<Link
+					to={`${url}/friends/requests/sent`}
+					className={`btn my-1 ${isActive("/messenger/friends/requests/sent") ? "btn-primary" : "btn-light"}`}
+					style={{ width: "100%" }}
+				>
+					Sent Requests
+				</Link>
+
+				<Link
+					to={`${url}/friends/list`}
+					className={`btn my-1 ${isActive("/messenger/friends/list") ? "btn-primary" : "btn-light"}`}
+					style={{ width: "100%" }}
+				>
+					My Friends
+				</Link>
+
+				<Link
+					to={`${url}/friends/blocklist`}
+					className={`btn my-1 ${isActive("/messenger/friends/blocklist") ? "btn-primary" : "btn-light"}`}
+					style={{ width: "100%" }}
+				>
+					Blocklist
+				</Link>
 			</div>
-		</React.Fragment>
+
+			{/* Main Content */}
+			<div style={{ flex: 1, overflowY: "auto" }}>
+				<Switch>
+					<Route exact path={`${path}/`} component={ConversationSidebar} />
+					<Route exact path={`${path}/chat/:id`} component={ChatWindow} />
+					<Route exact path={`${path}/group/:id`} component={ChatWindow} />
+					<Route exact path={`${path}/create-group`} component={CreateGroup} />
+					<Route exact path={`${path}/friends/suggestions`} component={FriendSuggestion} />
+					<Route exact path={`${path}/friends/requests`} component={FriendRequests} />
+					<Route exact path={`${path}/friends/requests/sent`} component={SentRequests} />
+					<Route exact path={`${path}/friends/list`} component={FriendsList} />
+					<Route exact path={`${path}/friends/blocklist`} component={BlockList} />
+				</Switch>
+			</div>
+		</div>
 	);
 };
 
-Messenger.propTypes = {
-	closeSideNav: PropTypes.func.isRequired,
-	getConversations: PropTypes.func.isRequired,
-	getMessages: PropTypes.func.isRequired,
-	sendMessage: PropTypes.func.isRequired,
-	getOnlineUserData: PropTypes.func.isRequired,
-};
-
-const mapStateToProps = (state) => ({
-	auth: state.auth,
-	chat: state.chat,
-});
-
-export default connect(mapStateToProps, {
-	closeSideNav,
-	getConversations,
-	getMessages,
-	sendMessage,
-	getOnlineUserData,
-})(Messenger);
+export default Messenger;

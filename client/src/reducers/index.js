@@ -6,5 +6,6 @@ import post from "./post";
 import user from "./users";
 import extras from "./extras";
 import chat from "./chat";
+import story from "./story"
 
-export default combineReducers({ alert, auth, request, post, user, extras, chat });
+export default combineReducers({ alert, auth, request, post, user, extras, chat , story });

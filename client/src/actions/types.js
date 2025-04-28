@@ -87,3 +87,9 @@ export const ACCOUNT_DELETED = "ACCOUNT_DELETED";
 export const GET_CONVERSATIONS = "GET_CONVERSATIONS";
 export const GET_MESSAGES = "GET_MESSAGES";
 export const MESSAGE_SENT = "MESSAGE_SENT";
+
+//story related
+export const GET_STORIES = "GET_STORIES";
+export const STORY_ERROR = "STORY_ERROR";
+export const UPDATE_LIKES = "UPDATE_LIKES";
+export const UPDATE_UNLIKES = "UPDATE_UNLIKES";

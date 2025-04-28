@@ -18,6 +18,7 @@ http.listen(PORT, () => console.log(`Server is up on port ${PORT}`));
 const io = require("socket.io")(http, {
 	cors: {
 		origin: `${process.env.CLIENT_URL}`,
+		methods: ["GET" , "POST"]
 	},
 });
 
@@ -36,11 +37,13 @@ app.use("/api/users", require("./routes/api/users"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/requests", require("./routes/api/request"));
+app.use("/api/blocking", require("./routes/api/blocking"));
 app.use("/api/posts", require("./routes/api/posts"));
+app.use("/api/friends", require("./routes/api/friends"));
 // app.use("/api/jobs", require("./routes/api/jobs"));
 app.use("/api/extras", require("./routes/api/extras"));
 app.use("/api/conversations", require("./routes/api/conversations"));
-app.use("/api/messages", require("./routes/api/message"));
+app.use("/api/messages", require("./routes/api/messages.js"));
 app.use("/api/channels",require("./routes/api/channel"));
 app.use("/awards", express.static(path.join(__dirname, "/images")));
 
@@ -48,6 +51,10 @@ app.use("/api/job", require("./routes/api/jobs"));
 app.use("/api/event", require("./routes/api/event"));
 app.use("/api/notifications", require("./routes/api/notifications"));
 
+
+app.use("/api/stories", require("./routes/api/stories"));
+
+app.use('/uploads', express.static('uploads'));
 
 
 
@@ -104,43 +111,55 @@ app.post("/upload-image", upload.single("file"), function (req, res){
 	res.json(req.file.filename);
 });
 
-let users = [];
+let onlineUsers = new Map();
 
-const addUser = (userId, socketId) => {
-	!users.some((user) => user.userId === userId) &&
-		users.push({ userId, socketId });
-};
 
-const removeUser = (socketId) => {
-	users = users.filter((user) => user.socketId !== socketId);
-};
+io.on('connection', (socket) => {
+	console.log("New socket connected: ", socket.id);
 
-const getUser = (userId) => {
-	return users.find((user) => user.userId === userId);
-};
-
-io.on("connection", (socket) => {
-	//take userId and socketId from user
+	// Save userId and socket.id when user logs in
 	socket.on("addUser", (userId) => {
-		addUser(userId, socket.id);
-		io.emit("getUsers", users);
+		onlineUsers.set(userId, socket.id);
+		console.log("Current Online Users:", onlineUsers);
 	});
 
-	//send and get message
-	socket.on("sendMessage", ({ senderId, receiverId, text }) => {
-		const user = getUser(receiverId);
-		if (user) {
-			io.to(user.socketId).emit("getMessage", {
+	// Handle sending messages
+	socket.on("sendMessage", ({ senderId, receiverId, text, conversationId, isGroup }) => {
+		if (isGroup) {
+			// 🚀 Emit to all group members (except sender)
+			socket.broadcast.to(conversationId).emit("receiveMessage", {
 				senderId,
 				text,
+				conversationId,
 			});
+		} else {
+			const receiverSocketId = onlineUsers.get(receiverId);
+			if (receiverSocketId) {
+				io.to(receiverSocketId).emit("receiveMessage", {
+					senderId,
+					text,
+					conversationId,
+				});
+			}
 		}
 	});
 
-	//when disconnect
+	// Handle joining a group chat room
+	socket.on("joinGroup", (conversationId) => {
+		socket.join(conversationId);
+		console.log(`Socket ${socket.id} joined group ${conversationId}`);
+	});
+
+	// Disconnect
 	socket.on("disconnect", () => {
-		removeUser(socket.id);
-		io.emit("getUsers", users);
+		console.log("Socket disconnected:", socket.id);
+		for (let [key, value] of onlineUsers) {
+			if (value === socket.id) {
+				onlineUsers.delete(key);
+				break;
+			}
+		}
+		console.log("Current Online Users after disconnect:", onlineUsers);
 	});
 });
 

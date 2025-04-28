@@ -21,10 +21,12 @@ const Navbar = ({
         </Link>
       </li>
       <li>
-        <Link to="/messenger" className="navbar-link">
-          <span className="hide-sm">Messenger</span>
-        </Link>
+      <Link to="/messenger" className="navbar-link">
+       <i className="fas fa-comments"></i> 
+      <span className="hide-sm">Messenger</span>
+      </Link>
       </li>
+
       <li>
         <Link
           to="/jobs"
@@ -53,6 +55,12 @@ const Navbar = ({
           <span className="hide-sm">Members</span>
         </Link>
       </li>
+      <li>
+     <Link to="/stories" className="navbar-link">
+      <span className="hide-sm">Stories of Alumni</span>
+     </Link>
+     </li>
+
       <li>
         <Link to="/userprofile" className="navbar-link">
           <i className="fas fa-user"></i>{" "}
@@ -106,16 +114,11 @@ const Navbar = ({
           <span className="hide-sm">Achievements/Awards</span>
         </Link>
       // </li> */}
-      <li>
-      <a 
-      href="https://nano-media.netlify.app/" 
-      target="_blank" 
-      rel="noopener noreferrer" 
-      className="navbar-link"
-      >
-  <span className="hide-sm">Messenger</span>
-</a>
-
+     <li>
+       <Link to="/messenger" className="navbar-link">
+       <i className="fas fa-comments"></i> 
+       <span className="hide-sm">Messenger</span>
+      </Link>
       </li>
       <li>
         <a
@@ -137,6 +140,7 @@ const Navbar = ({
           <span style={{ textTransform: "capitalize" }}>Jobs</span>
         </Link>
       </li>
+     
       <li>
         <Notification />
       </li>
@@ -155,6 +159,12 @@ const Navbar = ({
           <span className="hide-sm">Members</span>
         </Link>
       </li>
+      <li>
+     <Link to="/stories" className="navbar-link">
+         <span className="hide-sm">Stories of Alumni</span>
+    </Link>
+     </li>
+
       <li>
         <Link to="/userprofile" className="navbar-link">
           <i className="fas fa-user"></i>{" "}
@@ -201,6 +211,11 @@ const Navbar = ({
         <Link to="/help" className="navbar-link">
           <span className="hide-sm">Help</span>
         </Link>
+      </li>
+      <li>
+     <Link to="/stories" className="navbar-link">
+       <span className="hide-sm">Stories of Alumni</span>
+     </Link>
       </li>
       <li>
         <Link to="/register" className="navbar-link">

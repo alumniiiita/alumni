@@ -29,8 +29,8 @@ const UserSchema = new mongoose.Schema({
 	avatar: {
 		type: String,
 	},
-	friends:[String],
-	blocked:[String],
+	friends: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
+	blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'user' }],
 	online:{
       type:Boolean,
 	  default:false

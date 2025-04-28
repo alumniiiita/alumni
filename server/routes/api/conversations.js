@@ -1,55 +1,60 @@
-const router = require("express").Router();
-const Conversation = require("../../models/Conversation");
+const express = require("express");
+const router = express.Router();
 const auth = require("../../middleware/auth");
+const Conversation = require("../../models/Conversation");
+const User = require("../../models/User");
 
-//new conv
-
-router.post("/", auth, async (req, res) => {
-	const newConversation = new Conversation({
-		members: [req.body.senderId, req.body.receiverId],
-	});
-
+// Start a Private or Group Conversation
+router.post("/start", auth, async (req, res) => {
 	try {
-		const savedConversation = await newConversation.save();
-		res.status(200).json(savedConversation);
-	} catch (err) {
-		res.status(500).json(err);
+		const { memberIds, groupName } = req.body;
+
+		const isGroup = memberIds.length > 1;
+
+		const newConversation = new Conversation({
+			isGroup,
+			groupName: isGroup ? groupName : null,
+			members: [req.user.id, ...memberIds],
+			groupAdmins: isGroup ? [req.user.id] : [],
+		});
+
+		const conversation = await newConversation.save();
+		res.json(conversation);
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send("Server Error");
 	}
 });
 
-//get conv of a user
-
-router.get("/:userId", auth, async (req, res) => {
+// Make Admin in Group
+router.put("/group/make-admin", auth, async (req, res) => {
 	try {
-		const conversation = await Conversation.find({
-			members: { $in: [req.params.userId] },
+		const { conversationId, userId } = req.body;
+
+		await Conversation.findByIdAndUpdate(conversationId, {
+			$push: { groupAdmins: userId },
 		});
-		res.status(200).json(conversation);
-	} catch (err) {
-		res.status(500).json(err);
+
+		res.json({ msg: "User promoted to admin" });
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send("Server Error");
 	}
 });
 
-// get conv includes two userId
-
-router.get("/find/:firstUserId/:secondUserId", auth, async (req, res) => {
+// Remove Member from Group
+router.put("/group/remove-member", auth, async (req, res) => {
 	try {
-		let conversation_obj = null;
+		const { conversationId, userId } = req.body;
 
-		conversation_obj = await Conversation.findOne({
-			members: {
-				$all: [req.params.firstUserId, req.params.secondUserId],
-			},
+		await Conversation.findByIdAndUpdate(conversationId, {
+			$pull: { members: userId },
 		});
-		if (!conversation_obj) {
-			const conversation = new Conversation({
-				members: [req.params.firstUserId, req.params.secondUserId],
-			});
-			conversation_obj = await conversation.save();
-		}
-		res.status(200).json(conversation_obj);
-	} catch (err) {
-		res.status(500).json(err);
+
+		res.json({ msg: "User removed from group" });
+	} catch (error) {
+		console.error(error.message);
+		res.status(500).send("Server Error");
 	}
 });
 
