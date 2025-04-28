@@ -1,11 +1,13 @@
+// src/components/messenger/ConversationSidebar.jsx
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 
 const ConversationSidebar = () => {
 	const [friends, setFriends] = useState([]);
 	const [groups, setGroups] = useState([]);
-	let { url } = useRouteMatch();
+	const history = useHistory();
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -14,16 +16,25 @@ const ConversationSidebar = () => {
 					axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/friends/list`),
 					axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/conversations/groups`),
 				]);
-
 				setFriends(friendsRes.data);
 				setGroups(groupsRes.data);
 			} catch (err) {
-				console.error("Error fetching sidebar data", err.message);
+				console.error(err.message);
 			}
 		};
-
 		fetchData();
 	}, []);
+
+	const handleFriendClick = async (friendId) => {
+		try {
+			const res = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/conversations/start`, {
+				memberIds: [friendId],
+			});
+			history.push(`/messenger/chat/${res.data._id}`);
+		} catch (err) {
+			console.error(err.message);
+		}
+	};
 
 	return (
 		<div style={{ padding: "1em" }}>
@@ -33,60 +44,43 @@ const ConversationSidebar = () => {
 				<p style={{ color: "gray" }}>No Friends Yet</p>
 			) : (
 				friends.map((friend) => (
-					<Link
+					<div
 						key={friend._id}
-						to={`${url}/chat/${friend._id}`}
+						onClick={() => handleFriendClick(friend._id)}
 						className="card p-2 mb-2"
 						style={{
-							display: "block",
-							textDecoration: "none",
-							color: "black",
+							cursor: "pointer",
 							borderRadius: "8px",
 							background: "#f9f9f9",
 							boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
 						}}
 					>
 						{friend.name}
-					</Link>
+					</div>
 				))
 			)}
-
-			{/* ✅ Find Friends Button */}
-			<div style={{ marginTop: "1.5em", textAlign: "center" }}>
-				<Link
-					to="/messenger/friends/suggestions"
-					className="btn btn-primary"
-					style={{ width: "100%" }}
-				>
-					Find Friends
-				</Link>
-			</div>
 
 			<hr style={{ margin: "2em 0" }} />
 
 			<h3>Groups</h3>
 
-			{groups.length === 0 ? (
-				<p style={{ color: "gray" }}>No Groups Joined Yet</p>
-			) : (
-				groups.map((group) => (
-					<Link
-						key={group._id}
-						to={`${url}/group/${group._id}`}
-						className="card p-2 mb-2"
-						style={{
-							display: "block",
-							textDecoration: "none",
-							color: "black",
-							borderRadius: "8px",
-							background: "#f9f9f9",
-							boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-						}}
-					>
-						{group.groupName}
-					</Link>
-				))
-			)}
+			{groups.map((group) => (
+				<Link
+					key={group._id}
+					to={`/messenger/group/${group._id}`}
+					className="card p-2 mb-2"
+					style={{
+						display: "block",
+						textDecoration: "none",
+						color: "black",
+						borderRadius: "8px",
+						background: "#f9f9f9",
+						boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+					}}
+				>
+					{group.groupName}
+				</Link>
+			))}
 		</div>
 	);
 };

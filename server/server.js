@@ -43,7 +43,7 @@ app.use("/api/friends", require("./routes/api/friends"));
 // app.use("/api/jobs", require("./routes/api/jobs"));
 app.use("/api/extras", require("./routes/api/extras"));
 app.use("/api/conversations", require("./routes/api/conversations"));
-app.use("/api/messages", require("./routes/api/messages.js"));
+app.use("/api/messages", require("./routes/api/messages"));
 app.use("/api/channels",require("./routes/api/channel"));
 app.use("/awards", express.static(path.join(__dirname, "/images")));
 
@@ -113,53 +113,48 @@ app.post("/upload-image", upload.single("file"), function (req, res){
 
 let onlineUsers = new Map();
 
+io.on("connection", (socket) => {
+	console.log("New socket connected:", socket.id);
 
-io.on('connection', (socket) => {
-	console.log("New socket connected: ", socket.id);
-
-	// Save userId and socket.id when user logs in
 	socket.on("addUser", (userId) => {
-		onlineUsers.set(userId, socket.id);
-		console.log("Current Online Users:", onlineUsers);
+		if (userId) {
+			console.log("userID",userId)
+			onlineUsers.set(userId.toString(), socket.id);
+			console.log("user_added",onlineUsers)
+		}
+
 	});
 
-	// Handle sending messages
-	socket.on("sendMessage", ({ senderId, receiverId, text, conversationId, isGroup }) => {
+	socket.on("joinGroup", (conversationId) => {
+		socket.join(conversationId);
+		console.log("joined group",conversationId)
+	});
+
+	socket.on('sendMessage', ({ senderId, receiverId, conversationId, text, isGroup }) => {
+
+		console.log("isg",isGroup)
 		if (isGroup) {
-			// 🚀 Emit to all group members (except sender)
-			socket.broadcast.to(conversationId).emit("receiveMessage", {
-				senderId,
-				text,
-				conversationId,
-			});
+			socket.to(conversationId).emit('receiveMessage', { senderId, text, conversationId });
+			console.log("sent message from" ,senderId)
 		} else {
-			const receiverSocketId = onlineUsers.get(receiverId);
-			if (receiverSocketId) {
-				io.to(receiverSocketId).emit("receiveMessage", {
-					senderId,
-					text,
-					conversationId,
-				});
+			console.log( "receiver",receiverId)
+			const receiverSocket = onlineUsers.get(receiverId.toString());
+			console.log("recsock",receiverSocket)
+			if (receiverSocket) {
+				io.to(receiverSocket).emit('receiveMessage', { senderId, text, conversationId });
+				// console.log("sent message from" ,senderId)
 			}
 		}
 	});
 
-	// Handle joining a group chat room
-	socket.on("joinGroup", (conversationId) => {
-		socket.join(conversationId);
-		console.log(`Socket ${socket.id} joined group ${conversationId}`);
-	});
-
-	// Disconnect
 	socket.on("disconnect", () => {
-		console.log("Socket disconnected:", socket.id);
-		for (let [key, value] of onlineUsers) {
-			if (value === socket.id) {
-				onlineUsers.delete(key);
+		for (const [userId, socketId] of onlineUsers) {
+			if (socketId === socket.id) {
+				onlineUsers.delete(userId);
 				break;
 			}
 		}
-		console.log("Current Online Users after disconnect:", onlineUsers);
+		console.log("Socket disconnected:", socket.id);
 	});
 });
 
@@ -172,13 +167,13 @@ if (process.env.NODE_ENV === 'production'){
 
 
 // schedule.scheduleJob("*/2 * * * * *", async () => {
-// 	console.log("user upgrade job running");
+// 	//console.log("user upgrade job running");
 // 	try {
 // 		const users = await User.find();
-// 		console.log(users.length);
+// 		//console.log(users.length);
 // 		for (var i = 0; i < users.length; i++) {
 // 			var user = users[i];
-// 			console.log(user.role)
+// 			//console.log(user.role)
 // 			if (
 // 				user.role === "student" &&
 // 				user.passing_year <= new Date().getFullYear()
@@ -188,7 +183,7 @@ if (process.env.NODE_ENV === 'production'){
 // 			}
 // 		}
 // 	} catch (err) {
-// 		console.log(err);
+// 		//console.log(err);
 // 	}
 // });
 
