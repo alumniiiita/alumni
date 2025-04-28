@@ -54,7 +54,7 @@ const ConversationSidebar = () => {
 			{/* ✅ Find Friends Button */}
 			<div style={{ marginTop: "1.5em", textAlign: "center" }}>
 				<Link
-					to="/friends/suggestions"
+					to="/messenger/friends/suggestions"
 					className="btn btn-primary"
 					style={{ width: "100%" }}
 				>
