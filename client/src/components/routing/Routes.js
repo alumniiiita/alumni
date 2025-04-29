@@ -45,9 +45,9 @@ import FriendRequests from "../friends/FriendRequests";
 import BlockList from "../friends/BlockList";
 import SentRequests from "../friends/SentRequests"; // import it
 
-
 // ✅ Messenger Components
 import CreateGroup from "../messenger/CreateGroup";
+import DoubtRoom from '../doubts/DoubtRoom';
 
 const Routes = () => {
 	return (
@@ -98,6 +98,7 @@ const Routes = () => {
 				{/* ✅ Story Pages */}
 				<Route exact path="/stories" component={StoriesFeed} />
 				<AlumniRoute exact path="/stories/add" component={StoryForm} />
+				<Route exact path="/doubts" component={DoubtRoom} />
 
 				{/* Not Found Page */}
 				<Route component={NotFound} />

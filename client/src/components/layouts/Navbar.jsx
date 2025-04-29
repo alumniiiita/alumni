@@ -114,6 +114,13 @@ const Navbar = ({
           <span className="hide-sm">Achievements/Awards</span>
         </Link>
       // </li> */}
+
+    <li>
+      <Link to="/doubts" className="navbar-link">
+      <i className="fas fa-question-circle"></i>
+      <span className="hide-sm">Doubt Room</span>
+     </Link>
+     </li>
      <li>
        <Link to="/messenger" className="navbar-link">
        <i className="fas fa-comments"></i> 

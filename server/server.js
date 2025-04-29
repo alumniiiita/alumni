@@ -50,11 +50,10 @@ app.use("/awards", express.static(path.join(__dirname, "/images")));
 app.use("/api/job", require("./routes/api/jobs"));
 app.use("/api/event", require("./routes/api/event"));
 app.use("/api/notifications", require("./routes/api/notifications"));
-
-
 app.use("/api/stories", require("./routes/api/stories"));
-
 app.use('/uploads', express.static('uploads'));
+app.use("/api/doubts", require("./routes/api/doubts"));
+
 
 
 

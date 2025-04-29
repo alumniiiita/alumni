@@ -1,0 +1,115 @@
+.doubt-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .doubt-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  }
+  
+  .doubt-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+  }
+  
+  .doubt-meta {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  
+  .doubt-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .doubt-question {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  .doubt-info {
+    color: #666;
+    font-size: 0.85rem;
+  }
+  
+  .doubt-category {
+    background-color: #eef;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 0.75rem;
+  }
+  
+  .btn-upvote {
+    background: #007bff;
+    border: none;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .answer-list {
+    margin-top: 1rem;
+    padding-left: 1rem;
+    border-left: 2px solid #ddd;
+  }
+  
+  .answer-item {
+    background: #f9f9f9;
+    padding: 0.75rem;
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+  }
+  
+  .doubt-room {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: #fdfdfd;
+    border-radius: 12px;
+  }
+  
+  .doubt-room-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .doubt-room-header h1 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2c3e50;
+  }
+  
+  .doubt-subtext {
+    font-size: 1rem;
+    color: #666;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+  }
+  
+  .doubt-form-container {
+    margin-bottom: 2rem;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #eaeaea;
+    border-radius: 10px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  }
+  
+  .doubt-divider {
+    margin: 2rem 0;
+    border: none;
+    height: 1px;
+    background-color: #e0e0e0;
+  }
+  
