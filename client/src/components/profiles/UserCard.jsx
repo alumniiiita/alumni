@@ -8,6 +8,7 @@ import {
   unblockUser,
 } from "../../actions/users";
 import { connect } from "react-redux";
+import MentorshipButton from "../mentorship/MentorshipButton";
 
 const UserCard = ({
   auth: { authUser, loadingAuth },
@@ -184,9 +185,9 @@ const UserCard = ({
                         Remove admin
                       </button>
                     )}
-                    <div style={{ textAlign: "center", marginTop: "1em" }}>
-                   <MentorshipButton receiverId={profile._id} />
-                    </div>
+                    {profile._id !== authUser._id && (
+                    <MentorshipButton receiverId={profile._id} />
+                    )}
                 </div>
               </div>
             </div>
