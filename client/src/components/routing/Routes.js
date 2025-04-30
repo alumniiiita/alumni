@@ -53,7 +53,7 @@ const Routes = () => {
 	return (
 		<section
 			className="container my-container"
-			style={{ minHeight: "100vh" }}
+			style={{ minHeight: "100vh", marginTop: "70px" }}
 		>
 			<Alert />
 			<Switch>
