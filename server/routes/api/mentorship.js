@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const auth = require('../../middleware/auth');
-const MentorshipRequest = require('../../models/MentorShipRequest');
-
+const MentorShipRequest = require('../../models/MentorShipRequest');
 
 
 
@@ -54,6 +53,19 @@ router.put('/:id', auth, async (req, res) => {
       res.status(500).send('Server error');
     }
   });
+
+  // 🔁 Get mentorship requests sent by current user
+router.get("/sent", auth, async (req, res) => {
+    try {
+      const sent = await MentorShipRequest.find({ requestedBy: req.user.id })
+        .populate("requestedTo", "name");
+      res.json(sent);
+    } catch (err) {
+      console.error("❌ Error in /sent route:", err.message);
+      res.status(500).send("Server Error");
+    }
+  });
+
   
   module.exports = router;
   

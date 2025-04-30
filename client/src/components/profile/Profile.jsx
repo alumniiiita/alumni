@@ -8,6 +8,7 @@ import ProfileTop from "./ProfileTop";
 import ProfileAbout from "./ProfileAbout";
 import ProfileExperience from "./ProfileExperience";
 import ProfileEducation from "./ProfileEducation";
+import MentorshipButton from "../mentorship/MentorshipButton";
 
 const Profile = ({
   getUserById,
@@ -29,12 +30,20 @@ const Profile = ({
         <Spinner />
       ) : (
         <Fragment>
-          <button
-            className="btn btn-light mb-5 mt-5 mr-2"
+          <div className="d-flex mb-4 mt-5">
+           <button
+             className="btn btn-light mr-3"
             onClick={() => history.goBack()}
-          >
+             >
             Back To Profiles
-          </button>
+             </button>
+
+           {authUser &&
+              userProfile &&
+               authUser._id !== userProfile._id && (
+              <MentorshipButton receiverId={userProfile._id} />
+             )}
+            </div>
           {/* {auth.isAuthenticated &&
 						auth.loading === false &&
 						auth.user._id === profile.user._id && (
