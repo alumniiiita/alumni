@@ -45,9 +45,13 @@ import FriendRequests from "../friends/FriendRequests";
 import BlockList from "../friends/BlockList";
 import SentRequests from "../friends/SentRequests"; // import it
 
-// ✅ Messenger Components
 import CreateGroup from "../messenger/CreateGroup";
 import DoubtRoom from '../doubts/DoubtRoom';
+
+import MentorDashboard from "../mentorship/MentorDashBoard";
+
+
+
 
 const Routes = () => {
 	return (
@@ -99,6 +103,7 @@ const Routes = () => {
 				<Route exact path="/stories" component={StoriesFeed} />
 				<AlumniRoute exact path="/stories/add" component={StoryForm} />
 				<Route exact path="/doubts" component={DoubtRoom} />
+				<Route exact path="/mentorship" component={MentorDashBoard} />
 
 				{/* Not Found Page */}
 				<Route component={NotFound} />

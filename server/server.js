@@ -53,6 +53,7 @@ app.use("/api/notifications", require("./routes/api/notifications"));
 app.use("/api/stories", require("./routes/api/stories"));
 app.use('/uploads', express.static('uploads'));
 app.use("/api/doubts", require("./routes/api/doubts"));
+app.use("/api/mentorship", require("./routes/api/mentorship"));
 
 
 

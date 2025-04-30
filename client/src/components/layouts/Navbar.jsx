@@ -115,6 +115,13 @@ const Navbar = ({
         </Link>
       // </li> */}
 
+   <li>
+     <Link to="/mentorship" className="navbar-link">
+       <i className="fas fa-hands-helping"></i> 
+       <span className="hide-sm">Mentorship</span>
+    </Link>
+   </li>
+
     <li>
       <Link to="/doubts" className="navbar-link">
       <i className="fas fa-question-circle"></i>
