@@ -8,6 +8,7 @@ import { getUsers, getUsersByType } from "../../actions/users";
 import { closeSideNav } from "../../actions/alert";
 import UsersByType from "./UsersByType";
 
+
 function useQuery() {
 	return new URLSearchParams(useLocation().search);
 }
@@ -104,6 +105,7 @@ const Profiles = ({
 						{users && users.length > 0 ? (
 							users.map((user) => (
 								<UserCard key={user._id} profile={user} />
+								
 							))
 						) : (
 							<h4 style={{ textAlign: "center" }}>

@@ -1,52 +1,45 @@
-import React, { useState } from 'react';
-import axios from 'axios';
+import React from "react";
+import axios from "axios";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import { setAlert } from "../../actions/alert";
 
-const MentorshipButton = ({ userId }) => {
-  const [showForm, setShowForm] = useState(false);
-  const [area, setArea] = useState('Career');
-  const [message, setMessage] = useState('');
-
-  const handleRequest = async (e) => {
-    e.preventDefault();
-    await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/mentorship`, {
-      requestedTo: userId,
-      areaOfHelp: area,
-      message,
-    });
-    alert('Mentorship Request Sent!');
-    setShowForm(false);
+const MentorshipButton = ({ receiverId, auth: { authUser }, setAlert }) => {
+  const handleRequest = async () => {
+    try {
+      await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/mentorship/request`, {
+        receiverId,
+      });
+      setAlert("Mentorship request sent!", "success");
+    } catch (err) {
+      console.error(err.message);
+      setAlert("Failed to send request", "danger");
+    }
   };
 
-  return (
-    <div>
-      {!showForm && (
-        <button className="btn btn-outline-primary" onClick={() => setShowForm(true)}>
-          Request Mentorship
-        </button>
-      )}
+  // ✅ Only students can request mentorship from others (non-students)
+  if (!authUser || authUser.role !== "student") return null;
+  if (authUser._id === receiverId) return null; // prevent self-request
 
-      {showForm && (
-        <form onSubmit={handleRequest} style={{ marginTop: '1em' }}>
-          <select value={area} onChange={(e) => setArea(e.target.value)} required>
-            <option>Career</option>
-            <option>Research</option>
-            <option>Higher Studies</option>
-            <option>Entrepreneurship</option>
-            <option>Placements</option>
-            <option>Other</option>
-          </select>
-          <textarea
-            placeholder="Optional message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button type="submit" className="btn btn-success">
-            Send Request
-          </button>
-        </form>
-      )}
-    </div>
+  return (
+    <button
+      onClick={handleRequest}
+      className="btn btn-outline-primary"
+      style={{ borderRadius: "20px", marginTop: "1em" }}
+    >
+      🤝 Request Mentorship
+    </button>
   );
 };
 
-export default MentorshipButton;
+MentorshipButton.propTypes = {
+  receiverId: PropTypes.string.isRequired,
+  auth: PropTypes.object.isRequired,
+  setAlert: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  auth: state.auth,
+});
+
+export default connect(mapStateToProps, { setAlert })(MentorshipButton);
