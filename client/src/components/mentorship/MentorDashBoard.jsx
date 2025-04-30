@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const MentorDashboard = () => {
+const MentorDashBoard = () => {
   const [requests, setRequests] = useState([]);
 
   useEffect(() => {
@@ -42,4 +42,4 @@ const MentorDashboard = () => {
   );
 };
 
-export default MentorDashboard;
+export default MentorDashBoard;
