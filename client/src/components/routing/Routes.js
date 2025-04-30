@@ -48,7 +48,7 @@ import SentRequests from "../friends/SentRequests"; // import it
 import CreateGroup from "../messenger/CreateGroup";
 import DoubtRoom from '../doubts/DoubtRoom';
 
-import MentorDashboard from "../mentorship/MentorDashBoard";
+import MentorDashBoard from "../mentorship/MentorDashBoard";
 
 
 
