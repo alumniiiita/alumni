@@ -49,7 +49,7 @@ import CreateGroup from "../messenger/CreateGroup";
 import DoubtRoom from '../doubts/DoubtRoom';
 
 import MentorDashBoard from "../mentorship/MentorDashBoard";
-
+import ResourceHub from "../resource/ResourceHub";
 
 
 
@@ -104,6 +104,7 @@ const Routes = () => {
 				<AlumniRoute exact path="/stories/add" component={StoryForm} />
 				<Route exact path="/doubts" component={DoubtRoom} />
 				<Route exact path="/mentorship" component={MentorDashBoard} />
+				<Route exact path="/resources" component={ResourceHub} />
 
 				{/* Not Found Page */}
 				<Route component={NotFound} />
