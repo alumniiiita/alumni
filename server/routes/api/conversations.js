@@ -58,20 +58,22 @@ router.get("/groups", auth, async (req, res) => {
 
 // ✅ Get a single conversation (needed for ChatWindow)
 router.get("/:id", auth, async (req, res) => {
-	try {
-		const conversation = await Conversation.findById(req.params.id)
-			.populate("members", ["_id", "name", "avatar"]);
-		
-		if (!conversation) {
-			return res.status(404).json({ msg: "Conversation not found" });
-		}
-
-		res.json(conversation);
-	} catch (error) {
-		console.error(error.message);
-		res.status(500).send("Server Error");
-	}
-});
+	const conversation = await Conversation.findById(req.params.id).populate("members", "name blockedUsers");
+  
+	if (!conversation) return res.status(404).json({ msg: "Conversation not found" });
+  
+	const me = conversation.members.find(m => m._id.toString() === req.user.id);
+	const other = conversation.members.find(m => m._id.toString() !== req.user.id);
+  
+	const youBlocked = me?.blockedUsers?.includes(other?._id);
+	const blockedBy = other?.blockedUsers?.includes(me?._id);
+  
+	res.json({
+	  ...conversation.toObject(),
+	  youBlocked,
+	  blockedBy
+	});
+  });
 
 // ✅ Make Admin in Group
 router.put("/group/make-admin", auth, async (req, res) => {

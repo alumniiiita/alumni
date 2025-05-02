@@ -10,7 +10,7 @@ const BlockList = ({ auth: { authUser }, setAlert }) => {
 	useEffect(() => {
 		const fetchBlocked = async () => {
 			try {
-				const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/block/list`);
+				const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/block/blocked`);
 				setBlockedUsers(res.data);
 			} catch (err) {
 				console.error(err.message);
@@ -32,7 +32,7 @@ const BlockList = ({ auth: { authUser }, setAlert }) => {
 
 	const blockUser = async (userId) => {
 		try {
-			await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/block`, { userId });
+			await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/block/block`, { userIdToBlock: userId });
 			setAlert("User blocked", "success");
 			setBlockedUsers((prev) => [...prev, friends.find(f => f._id === userId)]);
 		} catch (err) {
@@ -43,7 +43,7 @@ const BlockList = ({ auth: { authUser }, setAlert }) => {
 
 	const unblockUser = async (userId) => {
 		try {
-			await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/unblock`, { userId });
+			await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/block/unblock`, { userIdToUnblock: userId });
 			setAlert("User unblocked", "success");
 			setBlockedUsers(blockedUsers.filter((u) => u._id !== userId));
 		} catch (err) {

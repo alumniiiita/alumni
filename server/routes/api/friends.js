@@ -156,7 +156,23 @@ router.get("/requests/sent", auth, async (req, res) => {
 	}
 });
 
+router.post("/cancel", auth, async (req, res) => {
+	try {
+		const { requestId } = req.body;
 
+		const request = await FriendRequest.findById(requestId);
+
+		if (!request || request.sender.toString() !== req.user.id) {
+			return res.status(400).json({ msg: "Invalid request or not authorized" });
+		}
+
+		await request.remove();
+		res.json({ msg: "Friend request canceled" });
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send("Server Error in canceling friend request");
+	}
+});
 
 
 module.exports = router;

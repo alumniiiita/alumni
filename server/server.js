@@ -37,7 +37,7 @@ app.use("/api/users", require("./routes/api/users"));
 app.use("/api/profile", require("./routes/api/profile"));
 app.use("/api/auth", require("./routes/api/auth"));
 app.use("/api/requests", require("./routes/api/request"));
-app.use("/api/blocking", require("./routes/api/blocking"));
+app.use("/api/block", require("./routes/api/blocking"));
 app.use("/api/posts", require("./routes/api/posts"));
 app.use("/api/friends", require("./routes/api/friends"));
 // app.use("/api/jobs", require("./routes/api/jobs"));

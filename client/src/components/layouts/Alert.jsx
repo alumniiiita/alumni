@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 
 const Alert = ({ alerts }) => {
+	console.log("🚨 Alerts", alerts);
 	if (alerts && alerts.length > 0) {
 		return (
 			<div className="alerts-container">
