@@ -18,12 +18,17 @@ const ChatWindow = ({ auth: { authUser } }) => {
 
   const handleReceive = useCallback(
     (data) => {
+		console.log("📩 Incoming message from socket:", data);
       if (data.conversationId === id) {
+		console.log("✅ Conversation ID matches current chat:", id);
         setMessages((prev) => [
           ...prev,
           { sender: data.senderId, text: data.text },
         ]);
       }
+	  else{
+		console.warn("❌ Conversation ID mismatch. Message ignored.");
+	  }
     },
     [id]
   );
@@ -38,12 +43,13 @@ const ChatWindow = ({ auth: { authUser } }) => {
     (async () => {
       try {
         const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/messages/${id}`);
+		console.log(res.data);
         setMessages(res.data);
 
         const conv = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/api/conversations/${id}`);
         const conversation = conv.data;
 
-        setIsGroupChat(conversation.isGroup);
+      setIsGroupChat(conversation.isGroup);
        setChatTitle(conversation.isGroup ? conversation.groupName : "");
        setYouBlocked(conversation.youBlocked);
        setBlockedBy(conversation.blockedBy);
@@ -79,6 +85,7 @@ const ChatWindow = ({ auth: { authUser } }) => {
 	if (text.trim() === "") return;
   
 	try {
+	  console.log("📤 Sending message:", text);
 	  await axios.post(`${process.env.REACT_APP_BACKEND_URL}/api/messages/send`, {
 		conversationId: id,
 		text,
@@ -119,7 +126,6 @@ const ChatWindow = ({ auth: { authUser } }) => {
         {messages.map((msg, idx) => (
           <div
             key={idx}
-            ref={scrollRef}
             style={{
               display: "flex",
               flexDirection: "column",
@@ -147,6 +153,7 @@ const ChatWindow = ({ auth: { authUser } }) => {
             </div>
           </div>
         ))}
+		 <div ref={scrollRef} />
       </div>
 
       {/* Message Input */}

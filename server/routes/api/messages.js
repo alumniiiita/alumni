@@ -25,7 +25,7 @@ router.post("/send", auth, async (req, res) => {
 	  }
   
 	  const newMessage = new Message({
-		conversationId,
+		conversation: conversationId, // ✅ not conversationId
 		sender: req.user.id,
 		text,
 	  });
